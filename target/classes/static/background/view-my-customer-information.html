@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>查看我的客户信息</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/pagination.js"></script>
+		<script type="text/javascript" src="/js/jquerysession.js"></script>
+		<style type="text/css">
+			[v-cloak]{
+				display:none;
+			}
+			#nullMsg {
+				  margin:  0 auto;
+				  width: 95%;
+				  height: 180px;
+				   display: flex;
+				  text-align: center;
+				  margin: 130px auto;
+				  font-size: xx-large;
+				  font-weight: bolder;
+				  color: #AAAAAA;
+				  justify-content:center;
+				  align-items:Center;
+				}
+		</style>
+	</head>
+	
+	<body>
+		<div class="container-fluid" id="listContent">
+			<div align="center"><h1 style="font-size: 20px;font-weight: 800;font-family: '微软雅黑';color: #0066FF;padding: 8px;">我的客户信息</h1></div>
+		    
+		    <div class="container">
+		    	<div class="row">
+					<div class="col-lg-7 col-md-7 col-sm-7 col-md-offset-3" >		
+						姓名 <input type="text" placeholder="请输入客户姓名" size="13" maxlength="20" v-model.trim="demand.personnelName"/>&nbsp;&nbsp;&nbsp;
+						手机号 <input type="text" placeholder="请输入手机号" size="13" maxlength="11" v-model.trim="demand.phoneNum"/>&nbsp;&nbsp;&nbsp;
+						<a href="javascript:void(0);" role="button" class="btn btn-success btn-sm" @click="loadTable()">下载报表</a>&nbsp;&nbsp;	
+						<a href="javascript:void(0);" role="button" class="btn btn-primary btn-sm" @click="showList(1,page.pageSize)">&nbsp;&nbsp;&nbsp;查&nbsp;询&nbsp;&nbsp;&nbsp;</a>
+					</div>
+		    	</div>	
+		    </div>
+		    
+		    <div align="center" v-if="dataList.length>0">
+			    <div class="table-responsive" style="padding-top: 10px;width: 600px;padding-top: 15px;">          
+			       <table class="table table-striped table-bordered" style="text-align: center;">
+			         <thead>
+			           <tr align="center">
+			             <th style="text-align: center;">客户姓名</th>
+			             <th style="text-align: center;">手机号</th>
+			             <th style="text-align: center;">所在区域</th>
+			             <th style="text-align: center;">车辆信息</th>
+			             <th style="text-align: center;">操作</th>
+			           </tr>
+			         </thead>
+			         <tbody>
+			          <tr v-for="customer in dataList" v-cloak>
+			             <td >{{customer.policyHolder.personnelName}}</td>
+			             <td >{{customer.policyHolder.phoneNum}}</td>
+			             <td >{{customer.province.province}}{{customer.city.city}}</td>
+			             <td><a href="view-customer-car.html" style="color: #337AB7;font-weight: 600;" @click="goCarDetail(customer.carOwnerId)">查看车主车辆</a></td>
+			             <td><a href="view-customer-details.html" style="color: #16BE69;font-weight: 600;" @click="goCarOwnerDetail(customer.carOwnerId)">查看车主信息</a></td>
+			           </tr>
+			         </tbody>
+			       </table>
+			      </div>
+			      <div align="center">
+		      	<navigation :pages="page.totalPage" :current.sync="page.pageIndex" @navpage="showList" :total-count="page.totalCount">
+		      	</navigation>
+		      </div>
+			    </div>
+			      
+		         <div id="nullMsg" v-else>
+			   		<p style="font-size:22px;color:gray;font-weight:bold;margin-top:20px">没有找到您要的信息</p>
+			   	</div>  
+		</div>
+		    <script type="text/javascript">
+		    var protocol = window.location.protocol;
+			  var host = window.location.hostname;
+			  var port = window.location.port;
+		 $(function(){
+		 	 var myCustomerVue=new Vue({
+		 		el:"#listContent",
+		 		created:function(){
+		 			this.judgeLogin();
+		 		},
+		 		data:{
+		 			empName:"",
+		 			dataList:[],
+		 			page:{
+		 				pageIndex:1,
+		 				pageSize:10,
+		 				totalPage:0,
+		 				totalCount:0
+		 			},
+		 			 /* 条件查询数据 */
+		 			demand:{
+		 				personnelName:"",
+		 				phoneNum:"",
+		 				empId:-1,
+		 				roleId:-1,
+		 			},
+		 		},
+		 		methods:{
+		 			showList:function(pageIndex,pageSize){
+		 				this.page.pageIndex=pageIndex;
+		 				this.page.pageSize=pageSize;
+		 				var params={"pageIndex":this.page.pageIndex,"pageSize":this.page.pageSize,
+		 						"customerCondition":JSON.stringify(this.demand)};
+		 				this.$http.post(protocol+"//"+host+":"+port+"/customer/findAllByCondition.action",params,{emulateJSON:true}).then(
+		 					 function(res){
+		 						 this.dataList=res.data.data.list;
+		 						 this.page.totalCount=res.data.data.total; 
+		 						 this.page.totalPage = res.data.data.pages; 
+		 					 },
+		 					 function(res){
+		 						alert('错了');
+		 						console.log(res);
+		 					 })
+		 			},
+		 			goCarDetail:function(carOwnerId){
+		 				$.session.set('carOwnerId', carOwnerId);
+		 				location.href="view-customer-car.html?carOwnerId="+carOwnerId;
+		 			},
+	 				goCarOwnerDetail:function(carOwnerId){
+	 				$.session.set('carOwnerId', carOwnerId);
+	 				location.href="view-customer-details.html?carOwnerId="+carOwnerId;
+	 			},
+	 			/*	点击下载报表，将客户信息全部查出，不分页*/  
+	 			loadTable:function(){
+	 				location.href = protocol+"//"+host+":"+port+"/customer/customerExcelDownload.action?personnelName="+this.demand.personnelName
+	 				+"&phoneNum="+this.demand.phoneNum+"&roleId="+this.demand.roleId;
+	 			},
+	 			judgeLogin:function(){
+	 				this.$http.post(protocol+"//"+host+":"+port+"/getLoginEmp.action").then(
+	 					function(res){
+	 						this.loginEmp = res.data.loginEmp;
+	 						if(this.loginEmp == null){//没有登录
+	 							window.parent.location.href="/background/background-login.html";
+	 						}else{
+	 							this.demand.loginEmpId = this.loginEmp.empId;
+	 							this.demand.empId=this.loginEmp.empId;
+	 							this.demand.roleId=this.loginEmp.roleId;
+	 							this.showList(1,this.page.pageSize);
+	 						}
+	 		            },
+	 					function(res){
+	 						alert("错了");
+	 						console.log(res);
+	 					});
+	 		    	
+	 			},
+		 		}
+		 		
+		 	})
+		 })
+		 </script>
+	</body>
+</html>

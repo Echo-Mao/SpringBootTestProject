@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: NanaBuUmiInsurance
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: Echo
+Implementation-Vendor-Id: com.nbui
+Build-Jdk: 1.8.0_181
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/NanaBuUmiInsurance
+Created-By: Maven Integration for Eclipse
+

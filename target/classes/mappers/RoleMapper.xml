@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nbui.role.dao.IRoleDao">
+
+    <!--  1查询所有的角色信息  -->
+    <select id="findAll" resultMap="roleWithTable">
+        select <include refid="roleColumn"></include> from role_info
+    </select>
+    
+    <!--  2根据登录员工Id查询角色更低的角色信息  -->
+    <select id="findAllByEmpId" parameterType="java.lang.Integer" resultMap="roleWithTable">
+        select <include refid="roleColumn"></include> from role_info where roleid &lt; (
+        		select e.emprid emprid from emp_info e where e.empid = #{longinEmpId}
+        	)
+    </select>
+    
+    
+    <select id="findRoleById" parameterType="java.lang.Integer" resultMap="roleWithTable">
+        select <include refid="roleColumn"></include> from role_info where roleid =#{roleId}
+    </select>
+    
+    <sql id="roleColumn">
+    	roleid,rolename,rolecreatedate,rolemodifydate,rolestatus
+    </sql>
+    
+    <resultMap type="Role" id="roleWithTable">
+        <id property="roleId" column="roleid"/>
+        <result property="roleName" column="rolename"/>
+        <result property="createTime" column="rolecreatedate"/>
+        <result property="modifyTime" column="rolemodifydate"/>
+        <result property="viewState" column="rolestatus"/>
+    </resultMap>
+</mapper>

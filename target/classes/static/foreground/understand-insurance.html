@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>了解车险</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/jquery.params.js"></script> 
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<style type="text/css">
+			.nav-tabs>li {
+				float: left;
+				margin-bottom: -1px;
+				width: 10%;
+				height: 100%;
+			}
+			
+			span {
+				font-size: 20px;
+				font-weight: bold;
+				color: slategray;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--导航栏-->
+		<div id="daohang">
+			<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+			<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+			<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+			<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+			
+			<a href="foreground-login.html" style="color: #000000;position: absolute;top:7px;right: 168px;"">退出登录</a>
+		</div>
+		
+		<div style="position: absolute;top: 52px;left: 167px;width: 1250px;">
+			<div class="row">
+	    		<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: -10px;text-align: right;">
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: -6px;padding-left: 0;">		
+						<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海车险</div>
+					</div>
+				<!--<div class="col-lg-2 col-md-2 col-sm-2 col-md-offset-2">
+					<span>险种&nbsp;&nbsp;</span><img src="../img/险种介绍.png" /><span>&nbsp;&nbsp;介绍</span>
+				</div>-->
+	    	</div>
+		</div>
+		
+		<div style="position: absolute;top: 100px;left: 720px;">
+					<span>险种&nbsp;&nbsp;</span><img src="../img/险种介绍.png" /><span>&nbsp;&nbsp;介绍</span>
+		</div>
+
+		<div align="center" style="position: absolute;top: 150px;left: 170px;">
+			<hr size="7" color="coral" style="float:left" width="50%">
+			<hr size="7" color="coral" style="float:right" width="50%">
+				<ul id="myTab" class="nav nav-tabs">
+					<li class="active">
+						<a href="#cl" data-toggle="tab">
+							车辆</br>损失险</a>
+					</li>
+					<li>
+						<a href="#sy" data-toggle="tab">商业第三者</br>责任险</a>
+					</li>
+					<li>
+						<a href="#qc" data-toggle="tab">全车</br>盗用险</a>
+					</li>
+					<li>
+						<a href="#sj" data-toggle="tab">司机座位</br>责任险</a>
+					</li>
+					<li>
+						<a href="#ck" data-toggle="tab">乘客座位</br>责任险
+						</a>
+					</li>
+					<li>
+						<a href="#bj" data-toggle="tab">不计免赔</br>
+							特约险</a>
+					</li>
+					<li>
+						<a href="#bl" data-toggle="tab">玻璃单独</br>
+							破碎险</a>
+					</li>
+					<li>
+						<a href="#zr" data-toggle="tab">自燃</br>
+							损失险</a>
+					</li>
+					<li>
+						<a href="#cs" data-toggle="tab">车身划痕</br>
+							损失险</a>
+					</li>
+					<li>
+						<a href="#ss" data-toggle="tab">
+							涉水险<br/>&nbsp;</a>
+					</li>
+				</ul>
+			<div id="myTabContent" class="tab-content">
+				<div class="tab-pane fade in active" id="cl">
+					<table width="100%">
+						<tr>
+							<td width="50%"><img src="../img/u813.PNG" width="100%"></td>
+							<td width="50%"><img src="../img/u811.gif" width="100%"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="tab-pane fade " id="sy">
+						<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u819.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u817.gif " width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class="tab-pane fade" id="qc">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u825.PNG" width="100%"></td>
+								<td width="50%"><img src="../img/u823.gif" width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="sj">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u831.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u829.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="ck">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u837.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u835.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="bj">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u843.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u841.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="bl">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u849.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u847.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="zr">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u855.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u853.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="cs">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u861.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u859.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				<div class=" tab-pane fade" id="ss">
+					<table width="100%">
+							<tr>
+								<td width="50%"><img src="../img/u867.PNG " width="100%"></td>
+								<td width="50%"><img src="../img/u865.gif "width="100%"></td>
+							</tr>
+						</table>
+				</div>
+				
+			</div>
+		</div>
+
+		<!--底部圆形图片链接-->
+		<div>
+			<img onclick="location.href='my-insurance.html'" src="../img/y1.PNG"  style="position: absolute;top: 683px; left: 600px;" title="保单查询">
+			<img onclick="location.href='buy-insurance.html'" src="../img/y2.PNG"  style="position: absolute;top: 683px; left: 760px;" title="购买车险">
+			<img onclick="location.href='my-insurance.html'" src="../img/y3.PNG"  style="position: absolute;top: 683px; left: 920px;" title="保单修改">
+		</div>
+		
+		<script>
+			$(function() {
+				$("a").on("click", function() {
+					var num = $(this).index();
+					$("#nav-tabs li").eq(num).tab("show");
+				});
+			});
+		</script>
+		<script type="text/javascript">
+		var queryLoginInfo= new Vue({
+			el:"#daohang",
+			data:{
+				loginInfo:{
+				loginId:'',
+				loginName:'',
+				loginPwd:'',
+				loginStatus:''}
+		     },
+			mounted:function(){
+				//查询登陆信息
+		        this.getLoginInfo();
+			},
+			methods:{
+				//获取登陆信息
+				getLoginInfo:function(){
+					this.$http.post("/getLoginInfo.action").then(
+							function(res){
+								this.loginInfo=res.data.loginInfo;
+								return;
+								//alert(this.loginInfo.loginId);
+							},
+							function(res){
+								this.loginInfo=null;
+							}
+						);
+				}
+			}
+			
+		});
+		</script>
+	</body>
+</html>

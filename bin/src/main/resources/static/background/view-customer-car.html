@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>查看用户车辆</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/pagination.js"></script>
+		<script type="text/javascript" src="/js/jquerysession.js"></script>
+		<style type="text/css">
+			[v-cloak]{
+				display:none;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="container-fluid" id="listContent">
+			<div align="center"><h1 style="font-size: 20px;font-weight: 800;font-family: '微软雅黑';color: #0066FF;padding: 8px;">车主车辆信息</h1></div>
+		    
+		    <div class="container" style="width: 1000px;">
+		    	车主姓名：<a href="view-customer-details.html" style="color: #16BE69;font-weight: 600;" v-cloak>{{Ipname}}</a>
+		    </div>
+		    
+		    <div align="center">
+		    	
+			    <div class="table-responsive" style="padding-top: 10px;width: 1000px;padding-top: 15px;">          
+			       <table class="table table-striped table-bordered" style="text-align: center;">
+			         <thead>
+			           <tr align="center">			             
+			             <th style="text-align: center;">品牌</th>
+			             <th style="text-align: center;">型号</th>
+			             <th style="text-align: center;">车牌号</th>
+			             <th style="text-align: center;">车架号</th>
+			             <th style="text-align: center;">核定载客</th>
+			             <th style="text-align: center;">登记日期</th>
+			             <th style="text-align: center;">发动机号</th>
+			           </tr>
+			         </thead>
+			         <tbody>
+			           <tr v-for="carInfo in dataList" v-cloak>
+			             <td>{{carInfo.brandInfo.brandname}}</td>
+			             <td>{{carInfo.versionInfo.versionName}}</td>
+			             <td>{{carInfo.plateNum}}</td>
+			             <td>{{carInfo.frameNum}}</td>
+			             <td>{{carInfo.busLoad}}</td>
+			             <td>{{carInfo.registerDate}}</td>
+			             <td>{{carInfo.engineNum}}</td>
+			           </tr>
+			           <tr><td colspan="7"><a href="javascript:history.go(-1)" role="button" class="btn btn-warning btn-sm">&nbsp;&nbsp;&nbsp;返&nbsp;回&nbsp;&nbsp;&nbsp;</a> </td></tr>
+			         </tbody>
+			       </table>
+			      </div>
+			    </div>
+			      
+		      <div align="center">
+		      	<navigation :pages="page.totalPage" :current.sync="page.IndexPage" @navpage="getCarDetail" :total-count="page.totalCount">
+		      	</navigation>
+		      </div>
+		</div>
+		
+		
+		<script type="text/javascript">
+		
+			$(function(){
+				var carOwnerId=$.session.get("carOwnerId");
+				var vueCar=new Vue({
+					el:"#listContent",
+					data:{
+						detailCarOwnerId:"",
+						dataList:[],
+						page:{
+		 					pageIndex:1,
+		 					pageSize:10,
+		 					totalPage:0,
+		 					totalCount:0
+	 					},
+	 					Ipname:"",
+	 					
+					},
+					created:function(){
+						this.getCarDetail(1,this.page.pageSize);
+					},
+					methods:{
+						getCarDetail:function(pageIndex,pageSize){
+							this.detailCarOwnerId=carOwnerId;
+							this.page.pageIndex=pageIndex;
+			 				this.page.pageSize=pageSize;
+							var params={"pageIndex":this.page.pageIndex,"pageSize":this.page.pageSize,"id":this.detailCarOwnerId};
+							this.$http.post("/car/findCarById.action",params,{emulateJSON:true}).then(
+								function(res){
+									this.dataList=res.data.data.list;
+									this.page.totalCount=res.data.data.total; 
+			 						this.page.totalPage = res.data.data.pages; 
+			 						this.Ipname=res.data.data.list[0].carOwner.personnelName;
+								},
+								 function(res){
+			 						alert('错了');
+			 						console.log(res);
+			 					 })
+						}
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

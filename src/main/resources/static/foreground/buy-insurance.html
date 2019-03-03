@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>购买车险</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/jquery.params.js"></script> 
+		<link rel="shortcut icon" type="image/x-icon" href="../img/logo.png" />
+		
+		<style>
+			[v-cloak]{
+				display:none ;
+			}
+		</style>
+	</head>
+	
+	<body>
+			<div id="bugInsurance">
+			<!--导航栏-->
+			<div>
+				<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+				<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+				<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+				<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+				
+				<a href="/outLogin.action" style="color: #000000;position: absolute;top:7px;right: 168px;">退出登录</a>
+			</div>
+			
+			<div style="position: absolute;top: 52px;left: 167px;width: 1250px;">
+				<div class="row">
+		    		<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: -10px;text-align: right;">
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: -6px;padding-left: 0;">		
+						<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海车险</div>
+					</div>
+		    	</div>
+			</div>
+			
+			<img src="../img/车辆填写.PNG" style="position: absolute;top: 120px;left: 167px;"/>
+	
+			<div style="position: absolute;top: 154px;left: 167px;width: 800px;height: 605px;background-color: #F7F7F7;">
+				<form action="#" method="">
+					<table  style="margin: 0 auto; text-align: center; width: 600px;">
+						<tbody>
+							<tr >
+								<td colspan="2" ><h3>汽车信息填写</h3></td>
+							</tr>
+							<tr height="50px">
+								<td style="text-align: left;" colspan="2">
+									<font color="red">请如实勾选, 以免影响理赔：</font>						
+								        <input type="checkbox" id="AC1">是否二手车&nbsp;&nbsp;
+								        <input type="checkbox" id="AC2">是否发生事故&nbsp;&nbsp;
+								        <input type="checkbox" id="AC3">是否改装&nbsp;&nbsp;
+								        <input type="checkbox" id="AC4">是否维修过发动机					
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+									<input type="date" style="width: 181px;" v-model="carInfo.registerDate"> 车辆注册登记日期
+									<span style="color:red" v-cloak>{{registerDateMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+								    <input type="text" placeholder="请输入车牌号" size="21" v-model="carInfo.plateNum" id="plate" maxlength="7">
+									<input type="checkbox" @click="disablePlate()" id="plateCheckbox">未获得车牌号
+									<span style="color:red" v-cloak>{{plateNumMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+							    	<input type="text" id="" placeholder="请输入车架号" size="21" v-model="carInfo.frameNum" maxlength="17">
+							    	<span style="color:red" v-cloak>{{frameNumMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+							    	<input type="text" id="" placeholder="请输入发动机号" size="21" v-model="carInfo.engineNum" maxlength="16">
+							    	<span style="color:red" v-cloak>{{engineNumMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+									<select style="width: 90px;" v-model="carInfo.brandId" @change="getVersionByBrandId()">
+										<option value="-1">请选择</option>
+									    <option v-for="brand in brandList" :value="brand.brandId">{{brand.brandname}}</option>
+								 </select>&nbsp;品牌
+								    <select style="width: 120px;" v-model="carInfo.versionId" @change="getCarOfferByVersion()">
+								    	<option value="-1">请选择</option>
+									    <option v-for="version in versionList" :value="version.versionId">{{version.versionName}}</option>
+								    </select>&nbsp;型号
+								    <span style="color:red" v-cloak>{{brandVersionMsg}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+								    <select style="width: 90px;" v-model="carInfo.busLoad">
+								    	<option value="-1">请选择</option>
+								   		<option value="2">2座</option>
+								   		<option value="4">4座</option>
+								    	<option value="5">5座</option>
+								    	<option value="7">7座</option>
+								    </select>&nbsp;核定载客
+								    <span style="color:red" v-cloak>{{busLoadMsg}}</span>
+								</td>
+							</tr>	
+							<tr>
+								<td style="text-align: left;">
+							    	<input type="text" id="" placeholder="请输入车主姓名"  size="21" v-model="relatedPersonnel.personnelName" maxlength="20">
+							    	<span style="color:red" v-cloak>{{personnelNameMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+							    	<input type="text" id="" placeholder="请输入手机号" size="21" v-model="relatedPersonnel.phoneNum" maxlength="11">
+							    	<span style="color:red" v-cloak>{{phoneNumMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							
+							<tr>
+								<td style="text-align: left;">
+									<select style="width: 90px;" v-model="relatedPersonnel.paperTypeId">
+										<option value="-1">请选择</option>
+									    <option v-for="paper in paperList" :value="paper.paperId">{{paper.paperType}}</option>
+								 </select>&nbsp;证件类型
+								 <span style="color:red" v-cloak>{{paperTypeIdMsg}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+							    	<input type="text" id="" placeholder="证件号码" size="21" v-model="relatedPersonnel.paperNum" maxlength="18">
+							    	<span style="color:red" v-cloak>{{paperNumMsg}}</span>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td style="text-align: left;" colspan="2">	
+									<select style="width: 80px;" v-model="relatedPersonnel.ipProvinceNum" @change="getCityByProvinceId()">
+									    <option value="-1">请选择</option>
+									    <option v-for="province in provinceList" :value="province.provinceId">{{province.province}}</option>
+								 	</select>省&nbsp;
+								    <select style="width: 80px;" v-model="relatedPersonnel.ipCity">
+									    <option value="-1">请选择</option>
+									    <option v-for="city in cityList" :value="city.cityId">{{city.city}}</option>
+								    </select>&nbsp;市
+								    <span style="color:red" v-cloak>{{areaMsg}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: left;">
+							    	<textarea placeholder="请填写详细地址"  v-model="relatedPersonnel.address" style="resize:none; width: 270px;" maxlength="100"></textarea>
+							    	<span style="color:red" v-cloak>{{addressMsg}}</span>
+								</td>
+							</tr>
+							<tr>
+								<td style="text-align: center;" colspan="2"><br/>
+									<button type="button" class="btn btn-info" onclick="location.href='foreground-index.html'">&nbsp;&nbsp;返&nbsp;&nbsp;回&nbsp;&nbsp;</button>&nbsp;&nbsp;
+
+									<button type="button" class="btn btn-info" @click="submitPageinfo()">立即报价</button>
+
+								</td>
+							</tr>			
+						</tbody>
+					</table>
+				</form>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+		  
+		  var protocol = window.location.protocol;
+		  var host = window.location.hostname;
+		  var port = window.location.port;
+
+			$(function() {	
+				$("th").prop("height","40px"); 
+				$("td").prop("height","34px"); 
+			}) ;
+			
+			var bugInsurance = new Vue({
+				el:"#bugInsurance",
+				mounted:function(){
+					//判断是否登陆
+					this.getLoginInfo();
+					//1获取所有的省份，品牌，证件类型
+					this.getPolicyDate() ;
+					this.getProvinces();
+					this.getBrand();
+					this.getPaper();
+					
+				},
+				data:{
+					/* 用于添加的汽车信息 */
+					carInfo:{
+						registerDate:'',
+						plateNum:'',
+						frameNum:'',
+						engineNum:'',
+						brandId:-1,
+						versionId:-1,
+						busLoad:-1
+					},
+					/*登陆信息*/
+					loginInfo:{
+						loginId:'',
+						loginName:'',
+						loginPwd:'',
+						loginStatus:''
+					},	
+					/* 用于添加的车主信息 */
+					relatedPersonnel:{ 
+						personnelName:'',
+						phoneNum:'',
+						paperTypeId:-1,
+						paperNum:'',
+						ipProvinceNum:-1,
+						ipCity:-1,
+						address:''
+					},
+					/* 省份、城市集合  用于选择省市 */
+					provinceList:[],
+					cityList:[],
+					/* 品牌型号集合 用于选择品牌型号*/
+					brandList:[],
+					versionList:[],
+					//用于选择证件类型
+					paperList:[],
+					
+					//汽车当前市场价
+					carOffer:0,
+					
+					//自动核保评分
+					score:0,
+					
+					carId:0,
+					carOwnerId:0,
+					policyId:0,
+					
+					autocheck1:0,
+					autocheck2:0,
+					autocheck3:0,
+					autocheck4:0,
+					
+					registerDateMsg:'',
+					plateNumMsg:'',
+					frameNumMsg:'',
+					engineNumMsg:'',
+					brandVersionMsg:'',
+					busLoadMsg:'',
+					personnelNameMsg:'',
+					phoneNumMsg:'',
+					paperTypeIdMsg:'',
+					paperNumMsg:'',
+					areaMsg:'',
+					addressMsg:''
+				},
+				methods:{
+					getPolicyDate:function(){	
+						this.carOffer = $.query.get("carOffer") ;	
+						this.carId = $.query.get("carId") ;	
+						this.carOwnerId = $.query.get("carOwnerId") ;	
+						this.policyId = $.query.get("policyId") ;
+						this.autocheck1 = $.query.get("autocheck1") ;	
+						this.autocheck2 = $.query.get("autocheck2") ;
+						this.autocheck3 = $.query.get("autocheck3") ;
+						this.autocheck4 = $.query.get("autocheck4") ;
+						if(this.autocheck1 == 1){
+							this.autocheck1 = 0 ;
+							$("#AC1").prop("checked",true) ;
+						}
+						if(this.autocheck2 == 1){
+							this.autocheck2 = 0 ;
+							$("#AC2").prop("checked",true) ;
+						}
+						if(this.autocheck3 == 1){
+							this.autocheck3 = 0 ;
+							$("#AC3").prop("checked",true) ;
+						}
+						if(this.autocheck4 == 1){
+							this.autocheck4 = 0 ;
+							$("#AC4").prop("checked",true) ;
+						}
+						if(this.carId != ''){
+							this.getCarInfo() ;
+							
+						}
+						if(this.carOwnerId != ''){
+							this.getCarOwnerInfo() ;
+							
+						}
+					},
+					getLoginInfo:function(){
+						this.$http.post(protocol+"//"+host+":"+port+"/getLoginInfo.action").then(
+								function(res){
+									this.loginInfo=res.data.loginInfo;
+									if(res.data.loginInfo==null){
+										alert("未登陆，请先登陆");
+										window.location = "/foreground/foreground-login.html";
+									}
+								},
+								function(res){
+									this.loginName="";
+								}
+							);
+					},
+					getCarInfo:function(){
+						var params = {"carId":this.carId};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/getCarInfoNolinkedlistByCarId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.carInfo.registerDate = res.data.carInfo.registerDate ;
+							this.carInfo.plateNum = res.data.carInfo.plateNum ;
+							this.carInfo.frameNum = res.data.carInfo.frameNum ;
+							this.carInfo.engineNum = res.data.carInfo.engineNum ;
+							this.carInfo.brandId = res.data.carInfo.brandId ;
+							this.getVersionByBrandId() ;
+							this.carInfo.versionId = res.data.carInfo.versionId ;
+							this.carInfo.busLoad = res.data.carInfo.busLoad ;
+	
+							if(this.carInfo.plateNum == "暂未获得车牌"){
+								this.carInfo.plateNum = '' ;
+								$("#plateCheckbox").prop("checked",true) ;
+								this.disablePlate() ;
+							}
+							/* if(this.carInfo.plateNum == null){
+								$("#plateCheckbox").prop("checked",true) ;
+								this.disablePlate() ;
+							} */
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					getCarOwnerInfo:function(){
+						var params = {"carOwnerId":this.carOwnerId};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/getCarOwnerInfoByCarOwnerId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.relatedPersonnel.personnelName = res.data.carOwner.personnelName ;
+							this.relatedPersonnel.phoneNum = res.data.carOwner.phoneNum ;
+							this.relatedPersonnel.paperTypeId = res.data.carOwner.paperTypeId ;
+							this.relatedPersonnel.paperNum = res.data.carOwner.paperNum ;
+							this.relatedPersonnel.ipProvinceNum = res.data.carOwner.ipProvinceNum ;
+							this.getCityByProvinceId() ;
+							this.relatedPersonnel.address = res.data.carOwner.address ;
+							this.relatedPersonnel.ipCity = res.data.carOwner.ipCity ;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					//查询所有省份				
+					getProvinces:function(){
+						var params = {};
+						this.$http.post(protocol+"//"+host+":"+port+"/privince/findAllProvince.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.provinceList = res.data.provinceList ;//返回的是map对象，名字为provinceList
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					//根据省份查询城市
+					getCityByProvinceId:function(){
+						var params = {"provinceId":this.relatedPersonnel.ipProvinceNum};
+						this.$http.post(protocol+"//"+host+":"+port+"/city/findAllCityByProinceId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.cityList = res.data.cityList ;
+							this.relatedPersonnel.insuredperson = -1 ;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					//查询所有品牌
+					getBrand:function(){
+						var params = {};
+						this.$http.post(protocol+"//"+host+":"+port+"/brand/findAllBrand.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.brandList = res.data.brandList
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					//根据品牌查询型号
+					getVersionByBrandId:function(){
+						var params = {"brandId":this.carInfo.brandId};
+						this.$http.post(protocol+"//"+host+":"+port+"/version/getVersionByBrandId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.versionList = res.data.versionList;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					getPaper:function(){
+						var params = {};
+						this.$http.post(protocol+"//"+host+":"+port+"/paper/getAllPaper.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.paperList = res.data.paperList;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					getCarOfferByVersion:function(){
+						var params = {"versionId":this.carInfo.versionId};
+						this.$http.post(protocol+"//"+host+":"+port+"/version/getCarOfferByVersion.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.carOffer = res.data.carOffer;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					checkInputInfo:function() {
+						this.registerDateMsg = '' ;
+						this.plateNumMsg = '' ;
+						this.frameNumMsg = '' ;
+						this.engineNumMsg = '' ;
+						this.brandVersionMsg = '' ;
+						this.busLoadMsg = '' ;
+						this.personnelNameMsg = '' ;
+						this.phoneNumMsg = '' ;
+						this.paperTypeIdMsg = '' ;
+						this.paperNumMsg = '' ;
+						this.areaMsg = '' ;
+						this.addressMsg = '' ;
+						
+						//自动审核
+						var count = 0 ;   //用来计数勾选框选中个数
+						this.score = 0 ;   //初始化自动核保的评分（1-4分，4分直接拒保）
+						/* var Autocheck = document.getElementsByName("Autocheck") ;
+						for (var i=0; i<Autocheck.length; i++) {
+							if(Autocheck[i].checked){
+								count++ ;
+								this.score = this.score + 1 ;
+							}
+						} */
+						if($("#AC1").is(":checked")){
+							this.autocheck1 = 1 ;
+							count++ ;
+							this.score = this.score + 1 ;
+						}
+						if($("#AC2").is(":checked")){
+							this.autocheck2 = 1 ;
+							count++ ;
+							this.score = this.score + 1 ;
+						}
+						if($("#AC3").is(":checked")){
+							this.autocheck3 = 1 ;
+							count++ ;
+							this.score = this.score + 1 ;
+						}
+						if($("#AC4").is(":checked")){
+							this.autocheck4 = 1 ;
+							count++ ;
+							this.score = this.score + 1 ;
+						}
+						if(count == 4){
+							this.score = 0 ;
+							alert("非常抱歉，鉴于您的车辆实际情况，我们没办法为您提供保障") ;
+							return false ;
+						}
+						
+						
+						if(this.carInfo.registerDate == '' ){
+							this.registerDateMsg = '您还未选择车辆注册日期' ;
+							return false ;
+						}
+						
+		
+						if(!($("#plateCheckbox").is(":checked"))){
+							var regexPlateNum = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/ ;		
+							if(this.carInfo.plateNum == '' ){
+								this.plateNumMsg = '您还未填写车牌号' ;
+								return false ;
+							}
+							if(!regexPlateNum.test(this.carInfo.plateNum)){
+								this.plateNumMsg = '车牌号格式有误，请填写有效车牌号' ;
+								return false ;
+							}
+						}
+						
+						var regexFrameNum = /^[A-Za-z0-9]{17}$/ ;
+						if(this.carInfo.frameNum == '' ){
+							this.frameNumMsg = '您还未填写车架号' ;
+							return false ;
+						}
+						if(!regexFrameNum.test(this.carInfo.frameNum)){
+							this.frameNumMsg = '车架号格式有误，请填写有效车架号' ;
+							return false ;
+						}
+						
+						var regexEngineNum = /^[A-Za-z0-9]{16}$/ ;
+						if(this.carInfo.engineNum == '' ){
+							this.engineNumMsg = '您还未填写发动机号' ;
+							return false ;
+						}
+						if(!regexEngineNum.test(this.carInfo.engineNum)){
+							this.engineNumMsg = '发动机号格式有误，请填写有效发动机号' ;
+							return false ;
+						}
+						
+						if(this.carInfo.brandId < 0 || this.carInfo.versionId < 0){
+							this.brandVersionMsg = '您还未选择车型' ;
+							return false ;
+						}
+						
+						if(this.carInfo.busLoad < 0){
+							this.busLoadMsg = '您还未选择载客数' ;
+							return false ;
+						}
+						
+						if(this.relatedPersonnel.personnelName == ''){
+							this.personnelNameMsg = '您还未填写车主姓名' ;
+							return false ;
+						}
+						
+						var regexPhoneNum = /(?:^1[3456789]|^9[28])\d{9}$/ ;
+						if(this.relatedPersonnel.phoneNum == ''){
+							this.phoneNumMsg = '您还未填写手机号' ;
+							return false ;
+						}
+						if(!regexPhoneNum.test(this.relatedPersonnel.phoneNum)){
+							this.phoneNumMsg = '手机号格式有误，请填入有效手机号' ;
+							return false ;
+						}
+						
+						//身份证正则
+						var regexIDcard = /(^\d{15}$)|(^\d{17}([0-9]|X)$)/;
+						//户口本正则
+						var regexRegisteredResidence = /^[a-zA-Z0-9]{3,21}$/;   
+						//护照正则
+						var regexPassport = /^1[45][0-9]{7}$|(^[P|p|S|s]\d{7}$)|(^[S|s|G|g|E|e]\d{8}$)|(^[Gg|Tt|Ss|Ll|Qq|Dd|Aa|Ff]\d{8}$)|(^[H|h|M|m]\d{8,10}$)/;    
+						if(this.relatedPersonnel.paperTypeId < 0){
+							this.paperTypeIdMsg = '您还未选择证件类型' ;
+							return false ;
+						}	
+						if(this.relatedPersonnel.paperNum == ''){
+							this.paperNumMsg = '您还未填写证件号码' ;
+							return false ;
+						}
+						if(this.relatedPersonnel.paperTypeId == 1){
+							if(!regexIDcard.test(this.relatedPersonnel.paperNum)){
+								this.paperNumMsg = '身份证号码无效，请填写有效身份证' ;
+								return false ;
+							}
+						}
+						if(this.relatedPersonnel.paperTypeId == 2){
+							if(!regexRegisteredResidence.test(this.relatedPersonnel.paperNum)){
+								this.paperNumMsg = '户口本号码无效，请填写有效户口本号码' ;
+								return false ;
+							}
+						}
+						if(this.relatedPersonnel.paperTypeId == 3){
+							if(!regexPassport.test(this.relatedPersonnel.paperNum)){
+								this.paperNumMsg = '护照号码无效，请填写有效护照号码' ;
+								return false ;
+							}
+						}
+						
+						if(this.relatedPersonnel.ipProvinceNum < 0 || this.relatedPersonnel.ipCity < 0){
+							this.areaMsg = '您还未选择所在地区' ;
+							return false ;
+						}
+						
+						if(this.relatedPersonnel.address == ''){
+							this.addressMsg = '您还未填写详细地址' ;
+							return false ;
+						}
+						
+						return true ;
+					},
+					
+					disablePlate:function(){
+						if($("#plateCheckbox").is(":checked")){
+							$("#plate").prop({
+								"disabled":true,
+								"placeholder":"暂未获得车牌"
+							}) ;
+						}else{
+							$("#plate").prop({
+								"disabled":false,
+								"placeholder":"请输入车牌号"
+							}) ;
+						}
+					},
+					
+					submitPageinfo:function(){
+						if(!this.checkInputInfo()){
+							return ;
+						}
+						
+						if(this.policyId == ''){
+							this.submitPolicyInfo() ;
+						}else{
+							this.updateCarInfoAndCarOwnerInfo()
+						}
+					},
+					
+					updateCarInfoAndCarOwnerInfo:function(){
+						if(this.carInfo.plateNum == ''){
+							this.carInfo.plateNum = "暂未获得车牌" ;
+						}
+						var params = {"carOwner":JSON.stringify(this.relatedPersonnel),
+									  "carInfo":JSON.stringify(this.carInfo),
+									  "carOwnerId":this.carOwnerId,
+									  "carId":this.carId
+						};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/updateCarInfoAndCarOwnerInfo.action",params,{emulateJSON:true}).then(
+						function(res){
+							location.href='insurance-quote.html?carId='+this.carId+'&carOwnerId='
+									+this.carOwnerId+'&policyId='+this.policyId+'&score='+this.score+'&carOffer='+this.carOffer
+									+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2+'&autocheck3='+this.autocheck3
+									+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					submitPolicyInfo:function(){
+						if(this.carInfo.plateNum == ''){
+							this.carInfo.plateNum = "暂未获得车牌" ;
+						}
+						var params = {"relatedPersonnel":JSON.stringify(this.relatedPersonnel),
+									  "carInfo":JSON.stringify(this.carInfo),
+									  "score":this.score,
+									  "carOffer":this.carOffer
+						};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/addCarInfoAndCarOwnerInfo.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.carId = res.data.carId ;
+							this.carOwnerId = res.data.carOwnerId ;
+							this.policyId = res.data.policyId ;
+							location.href='insurance-quote.html?carId='+this.carId+'&carOwnerId='
+									+this.carOwnerId+'&policyId='+this.policyId+'&score='+this.score+'&carOffer='+this.carOffer
+									+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2+'&autocheck3='+this.autocheck3
+									+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					}
+			    }
+					
+			});
+		</script>
+	</body>
+</html>

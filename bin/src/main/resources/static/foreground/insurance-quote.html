@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>精准报价</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" type="image/x-icon" href="../img/logo.png" />
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/jquery.params.js"></script> 
+		<style>
+			[v-cloak]{
+				display:none ;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="insuranceQuote">
+		<!--导航栏-->
+		<div>
+			<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+			<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+			<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+			<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+			
+			<a href="/outLogin.action" style="color: #000000;position: absolute;top:7px;right: 168px;"">退出登录</a>
+		</div>
+		
+		<div style="position: absolute;top: 52px;left: 167px;width: 1250px;">
+			<div class="row">
+	    		<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: -10px;text-align: right;">
+					<img src="../img/logo.png" height="50px" />&nbsp;
+				</div>
+				<div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: -6px;padding-left: 0;">		
+					<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海车险</div>
+				</div>
+	    	</div>
+		</div>
+		
+		<img src="../img/精准报价.PNG" style="position: absolute;top: 120px;left: 167px;"/>
+		
+		<div style="position: absolute;top: 154px;left: 167px;width: 810px;height: 675px;background-color: #F7F7F7;">
+			<table class="table table-striped" style="margin: 0 auto; text-align: center;width: 700px;">
+				<tbody>
+					<tr>
+						<td style="text-align: left;">
+							车辆信息
+						</td>
+						<td style="text-align: left;">
+							<a @click="backToCarInfo()">修改车辆信息</a>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: left;" colspan="2">
+							<!-- <textarea cols="110" rows="4" /> 把之前填写的车辆信息填充到这里
+							</textarea> -->
+							<table  style="width:690px" >
+								<tr>
+									<td width="20%" style="border: 1px solid #C4C4C4">品牌型号</td>
+									<td width="30%" style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.brandName}}{{carInfo.versionName}}</td>
+									<td width="20%" style="border: 1px solid #C4C4C4">车辆注册登记时间</td>
+									<td width="30%" style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.registerDate}}</td>
+								</tr>
+								<tr>
+									
+								</tr>
+								<tr>
+									<td style="border: 1px solid #C4C4C4">车牌号</td>
+									<td style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.plateNum}}</td>
+									<td style="border: 1px solid #C4C4C4">核定载客</td>
+									<td style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.busLoad}}座</td>
+								</tr>
+								<tr>
+									<td style="border: 1px solid #C4C4C4">车架号</td>
+									<td style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.frameNum}}</td>
+									<td style="border: 1px solid #C4C4C4">发动机号</td>
+									<td style="border: 1px solid #C4C4C4" v-cloak>{{carInfo.engineNum}}</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: left;" colspan="2">
+							亲，根据车辆的具体情况，为您提供了以下方案，供参考：
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: left;" colspan="2">
+							<ul id="myTab" class="nav nav-tabs">
+								<li class="active">
+									<a href="#gaoxingjia" data-toggle="tab">
+										高性价比保障
+									</a>
+								</li>
+								<li>
+									<a href="#jiben" data-toggle="tab">基本保障</a>
+								</li>
+								<li>
+									<a href="#zhouquan" data-toggle="tab">周全保障</a>
+								</li>
+								<li>
+									<a href="#ziji" data-toggle="tab">自选方案</a>
+								</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+							<td style="text-align: left;" colspan="2">
+								<div id="myTabContent" class="tab-content">
+									
+									
+									<div class="tab-pane fade in active" id="gaoxingjia">	
+										<form action="#">
+										<table class="table">
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">商业险</P></td>
+												<td v-cloak>{{this.commercialInsurance1}}元</td>
+											</tr>
+											<tr>
+												<td>.车辆损失险</td>
+												<td v-cloak>{{this.vehicleLossInsurance.InsurancePrice}}元</td>
+												<td>.商业第三者责任险</td>
+												<td v-cloak>{{this.commercialThirdPartyLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.司机座位责任险</td>
+												<td v-cloak>{{this.driverSeatLiabilityInsurance.InsurancePrice}}元</td>
+												<td>.乘客座位责任险</td>
+												<td v-cloak>{{this.passengerSeatLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.自燃损失险</td>
+												<td v-cloak>{{this.spontaneousCombustionLossInsurance.InsurancePrice}}元</td>
+												<td>.不计免赔特约险</td>
+												<td v-cloak>{{this.excludingSpecialInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.额外保费</td>
+												<td v-cloak>{{this.extraPremium.InsurancePrice}}元</td>
+												<td colspan="2"></td>
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">交强险</P></td>
+												<td v-cloak>{{this.compulsoryInsurance.InsurancePrice}}元</td>
+												
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">保费合计:</P></td>
+												<td v-cloak>{{this.totalPremium1}}元</td>
+											</tr>
+											<tr>
+												<td colspan="4" style="text-align: right;">
+													<button type="button" class="btn btn-info" @click="backToCarInfo()">上一步</button>&nbsp;&nbsp;&nbsp;
+													<button type="button" class="btn btn-info" @click="highCostPerformanceRatio()">下一步</button>
+												</td>
+											</tr>
+										</table>
+										</form>
+									</div>
+																		
+									
+									<div class="tab-pane fade" id="jiben">
+										<form action="#">
+										<table class="table">
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">商业险</P></td>
+												<td v-cloak>{{this.commercialInsurance2}}元</td>
+											</tr>
+											<tr>
+												<td>.车辆损失险</td>
+												<td v-cloak>{{this.vehicleLossInsurance.InsurancePrice}}元</td>
+												<td>.商业第三者责任险</td>
+												<td v-cloak>{{this.commercialThirdPartyLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.司机座位责任险</td>
+												<td v-cloak>{{this.driverSeatLiabilityInsurance.InsurancePrice}}元</td>
+												<td>.乘客座位责任险</td>
+												<td v-cloak>{{this.passengerSeatLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.自燃损失险</td>
+												<td v-cloak>{{this.spontaneousCombustionLossInsurance.InsurancePrice}}元</td>
+												<td>.额外保费</td>
+												<td v-cloak>{{this.extraPremium.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">交强险</P></td>
+												<td v-cloak>{{this.compulsoryInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">保费合计:</P></td>
+												<td v-cloak>{{this.totalPremium2}}元</td>
+											</tr>
+											<tr>
+												<td colspan="4" style="text-align: right;">
+													<button type="button" class="btn btn-info" @click="backToCarInfo()">上一步</button>&nbsp;&nbsp;&nbsp;
+													<button type="button" class="btn btn-info" @click="basicProtection()">下一步</button>
+												</td>
+											</tr>
+										</table>
+										</form>
+									</div>
+									
+									
+									
+									<div class="tab-pane fade" id="zhouquan">
+										<form action="#">
+										<table class="table">
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">商业险</P></td>
+												<td v-cloak>{{this.commercialInsurance3}}元</td>
+											</tr>
+											<tr>
+												<td>.车辆损失险</td>
+												<td v-cloak>{{this.vehicleLossInsurance.InsurancePrice}}元</td>
+												<td>.商业第三者责任险</td>
+												<td v-cloak>{{this.commercialThirdPartyLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.司机座位责任险</td>
+												<td v-cloak>{{this.driverSeatLiabilityInsurance.InsurancePrice}}元</td>
+												<td>.乘客座位责任险</td>
+												<td v-cloak>{{this.passengerSeatLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>	
+											<tr>
+												<td>.全车盗用险</td>
+												<td v-cloak>{{this.fullVehicleEmbezzlementInsurance.InsurancePrice}}元</td>
+												<td>.涉水险</td>
+												<td v-cloak>{{this.wadingRisk.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.自燃损失险</td>
+												<td v-cloak>{{this.spontaneousCombustionLossInsurance.InsurancePrice}}元</td>
+												<td>.不计免赔特约险</td>
+												<td v-cloak>{{this.excludingSpecialInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>						
+												<td>.车身划痕损失险</td>
+												<td v-cloak>{{this.bodyScratchDamageRisk.InsurancePrice}}元</td>
+												<td>.玻璃单独破碎险</td>
+												<td v-cloak>{{this.breakageRiskofGlass.InsurancePrice}}元</td>	
+											</tr>	
+											<tr>
+												<td>.额外保费</td>
+												<td v-cloak>{{this.extraPremium.InsurancePrice}}元</td>
+												<td colspan="2"></td>
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">交强险</P></td>
+												<td v-cloak>{{this.compulsoryInsurance.InsurancePrice}}元</td>
+												
+											</tr>
+											<tr>
+												<td colspan="3"><P style="font-weight: bold;">保费合计:</P></td>
+												<td v-cloak>{{this.totalPremium3}}元</td>
+											</tr>
+											<tr>
+												<td colspan="4" style="text-align: right;">
+													<button type="button" class="btn btn-info" @click="backToCarInfo()">上一步</button>&nbsp;&nbsp;&nbsp;
+													<button type="button" class="btn btn-info" @click="comprehensiveGuarantee()">下一步</button>
+												</td>
+											</tr>
+										</table>
+										</form>
+									</div>
+									
+									
+									
+									<div class="tab-pane fade" id="ziji">
+										<form action="#">
+										<table class="table">
+											<tr>
+												<td colspan="5"><P style="font-weight: bold;">商业险</P></td>
+												<!-- <td>
+													<select id="cI" @change="commercialInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td> -->
+												<td v-cloak>{{this.commercialInsurance4}}元</td>
+											</tr>
+											<tr>
+												<td>.车辆损失险</td>
+												<td>
+													<select id="vLI" @change="vehicleLossInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalVehicleLossInsurance.InsurancePrice}}元</td>
+												<td>.商业第三者责任险</td>
+												<td>
+													<select id="cTPLI" @change="commercialThirdPartyLiabilityInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.司机座位责任险</td>
+												<td>
+													<select id="dSLI" @change="driverSeatLiabilityInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalDriverSeatLiabilityInsurance.InsurancePrice}}元</td>
+												<td>.乘客座位责任险</td>
+												<td>
+													<select id="pSLI" @change="passengerSeatLiabilityInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalPassengerSeatLiabilityInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.全车盗用险</td>
+												<td>
+													<select id="fVEI" @change="fullVehicleEmbezzlementInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice}}元</td>
+												<td>.涉水险</td>
+												<td>
+													<select id="wR" @change="wadingRiskSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td>{{this.optionalWadingRisk.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.自燃损失险</td>
+												<td>
+													<select id="sCLI" @change="spontaneousCombustionLossInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalSpontaneousCombustionLossInsurance.InsurancePrice}}元</td>
+												<td>.不计免赔特约险</td>
+												<td>
+													<select id="eSI" @change="excludingSpecialInsuranceSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalExcludingSpecialInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.车身划痕损失险</td>
+												<td>
+													<select id="bSDR" @change="bodyScratchDamageRiskSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td>{{this.optionalBodyScratchDamageRisk.InsurancePrice}}元</td>
+												<td>.玻璃单独破碎险</td>
+												<td>
+													<select id="bRG" @change="breakageRiskofGlassSelect()">
+														<option :value="1">投保</option>
+														<option :value="0">不投保</option>
+													</select>
+												</td>
+												<td v-cloak>{{this.optionalBreakageRiskofGlass.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td>.额外保费</td>
+												<td v-cloak>{{this.extraPremium.InsurancePrice}}元</td>
+												<td colspan="4"></td>
+											</tr>
+											<tr>
+												<td colspan="5"><P style="font-weight: bold;">交强险</P></td>
+												<td v-cloak>{{this.compulsoryInsurance.InsurancePrice}}元</td>
+											</tr>
+											<tr>
+												<td colspan="5"><P style="font-weight: bold;">保费合计:</P></td>
+												<td v-cloak>{{this.totalPremium4}}元</td>
+											</tr>
+											<tr>
+												<td colspan="6" style="text-align: right;">
+													<button type="button" class="btn btn-info" @click="backToCarInfo()">上一步</button>&nbsp;&nbsp;&nbsp;
+													<button type="button" class="btn btn-info" @click="optionalScheme()">下一步</button>
+												</td>
+											</tr>
+										</table>
+										</form>
+									</div>
+									
+								</div>
+							</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+		</div>
+		
+		<script type="text/javascript">			
+			var protocol = window.location.protocol;
+		    var host = window.location.hostname;
+		    var port = window.location.port;
+		    
+			var insuranceQuote = new Vue({
+				el:"#insuranceQuote",
+				mounted:function(){				
+					/* var carInfo=JSON.parse(localStorage.getItem('carInfo'));
+					if(carInfo!=null){
+						this.carInfo=carInfo;
+					} */
+					//获取登陆信息
+					this.getLoginInfo();
+					this.getPolicyDate() ;  //查询上个页面传过来的数据
+					this.getCarInfo() ; 
+					this.setPolisyId() ;
+					this.setEveryInsurancePrice() ;
+				},
+				data:{
+					carInfo:{
+						registerDate:'',
+						plateNum:'',
+						frameNum:'',
+						engineNum:'',
+						brandName:'',
+						versionName:'',
+						busLoad:''
+					},
+					/*登陆信息*/
+					loginInfo:{
+						loginId:'',
+						loginName:'',
+						loginPwd:'',
+						loginStatus:''
+					},
+					//车辆损失险
+					vehicleLossInsurance:{
+						policyId:0,
+						Insurance:1,
+						InsurancePrice:0
+					},
+					//商业第三者责任险
+					commercialThirdPartyLiabilityInsurance:{
+						policyId:0,
+						Insurance:2,
+						InsurancePrice:0
+					},
+					//司机座位责任险
+					driverSeatLiabilityInsurance:{
+						policyId:0,
+						Insurance:22,
+						InsurancePrice:0
+					},
+					//乘客座位责任险
+					passengerSeatLiabilityInsurance:{
+						policyId:0,
+						Insurance:23,
+						InsurancePrice:0
+					},
+					//自燃损失险
+					spontaneousCombustionLossInsurance:{
+						policyId:0,
+						Insurance:26,
+						InsurancePrice:0
+					},
+					//不计免赔特约险
+					excludingSpecialInsurance:{
+						policyId:0,
+						Insurance:24,
+						InsurancePrice:0
+					},
+					//全车盗用险
+					fullVehicleEmbezzlementInsurance:{
+						policyId:0,
+						Insurance:21,
+						InsurancePrice:0
+					},
+					//涉水险
+					wadingRisk:{
+						policyId:0,
+						Insurance:28,
+						InsurancePrice:0
+					},
+					//车身划痕损失险
+					bodyScratchDamageRisk:{
+						policyId:0,
+						Insurance:27,
+						InsurancePrice:0
+					},
+					//玻璃单独破碎险
+					breakageRiskofGlass:{
+						policyId:0,
+						Insurance:25,
+						InsurancePrice:0
+					},
+					//额外保费
+					extraPremium:{
+						policyId:0,
+						Insurance:4,
+						InsurancePrice:0
+					},
+					//交强险
+					compulsoryInsurance:{
+						policyId:0,
+						Insurance:3,
+						InsurancePrice:0
+					},
+					
+					
+					//自选方案的车辆损失险
+					optionalVehicleLossInsurance:{
+						policyId:0,
+						Insurance:1,
+						InsurancePrice:0
+					},
+					//自选方案的商业第三者责任险
+					optionalCommercialThirdPartyLiabilityInsurance:{
+						policyId:0,
+						Insurance:2,
+						InsurancePrice:0
+					},
+					//自选方案的司机座位责任险
+					optionalDriverSeatLiabilityInsurance:{
+						policyId:0,
+						Insurance:22,
+						InsurancePrice:0
+					},
+					//自选方案的乘客座位责任险
+					optionalPassengerSeatLiabilityInsurance:{
+						policyId:0,
+						Insurance:23,
+						InsurancePrice:0
+					},
+					//自选方案的自燃损失险
+					optionalSpontaneousCombustionLossInsurance:{
+						policyId:0,
+						Insurance:26,
+						InsurancePrice:0
+					},
+					//自选方案的不计免赔特约险
+					optionalExcludingSpecialInsurance:{
+						policyId:0,
+						Insurance:24,
+						InsurancePrice:0
+					},
+					//自选方案的全车盗用险
+					optionalFullVehicleEmbezzlementInsurance:{
+						policyId:0,
+						Insurance:21,
+						InsurancePrice:0
+					},
+					//自选方案的涉水险
+					optionalWadingRisk:{
+						policyId:0,
+						Insurance:28,
+						InsurancePrice:0
+					},
+					//自选方案的车身划痕损失险
+					optionalBodyScratchDamageRisk:{
+						policyId:0,
+						Insurance:27,
+						InsurancePrice:0
+					},
+					//自选方案的玻璃单独破碎险
+					optionalBreakageRiskofGlass:{
+						policyId:0,
+						Insurance:25,
+						InsurancePrice:0
+					},
+					
+					//商业险
+					commercialInsurance1:0,
+					commercialInsurance2:0,
+					commercialInsurance3:0,
+					commercialInsurance4:0,
+					
+					//保费合计
+					totalPremium1:0,
+					totalPremium2:0,
+					totalPremium3:0,
+					totalPremium4:0,	
+					
+					autocheck1:0,
+					autocheck2:0,
+					autocheck3:0,
+					autocheck4:0,
+					
+					carOffer:0,    //市场价 					
+					score:0,       //自动核保评分				
+					carId:0,       //汽车ID
+					carOwnerId:0,  //车主ID
+					policyId:0     //保单ID
+				},
+				methods:{
+					getLoginInfo:function(){
+						this.$http.post(protocol+"//"+host+":"+port+"/getLoginInfo.action").then(
+								function(res){
+									this.loginInfo=res.data.loginInfo;
+									if(res.data.loginInfo==null){
+										alert("未登陆，请先登陆");
+										window.location = "/foreground/foreground-login.html";
+									}
+								},
+								function(res){
+									this.loginName="";
+								}
+							);
+					},
+					getPolicyDate:function(){
+						this.carOffer = $.query.get("carOffer") ;				
+						this.score = $.query.get("score") ;			
+						this.carId = $.query.get("carId") ;	
+						this.carOwnerId = $.query.get("carOwnerId") ;	
+						this.policyId = $.query.get("policyId") ;
+						this.autocheck1 = $.query.get("autocheck1") ;	
+						this.autocheck2 = $.query.get("autocheck2") ;
+						this.autocheck3 = $.query.get("autocheck3") ;
+						this.autocheck4 = $.query.get("autocheck4") ;
+					},
+				
+					getCarInfo:function(){
+						var params = {"carId":this.carId};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/getCarInfoByCarId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.carInfo.registerDate = res.data.carInfo.registerDate ;
+							this.carInfo.plateNum = res.data.carInfo.plateNum ;
+							this.carInfo.frameNum = res.data.carInfo.frameNum ;
+							this.carInfo.engineNum = res.data.carInfo.engineNum ;
+							this.carInfo.brandName = res.data.carInfo.brandName ;
+							this.carInfo.versionName = res.data.carInfo.versionName ;
+							this.carInfo.busLoad = res.data.carInfo.busLoad ;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					setPolisyId:function(){
+						//其他方案的保单ID设置
+						this.vehicleLossInsurance.policyId = this.policyId ;
+						this.commercialThirdPartyLiabilityInsurance.policyId = this.policyId ;
+						this.driverSeatLiabilityInsurance.policyId = this.policyId ;
+						this.passengerSeatLiabilityInsurance.policyId = this.policyId ;
+						this.spontaneousCombustionLossInsurance.policyId = this.policyId ;
+						this.excludingSpecialInsurance.policyId = this.policyId ;
+						this.fullVehicleEmbezzlementInsurance.policyId = this.policyId ;
+						this.wadingRisk.policyId = this.policyId ;
+						this.bodyScratchDamageRisk.policyId = this.policyId ;
+						this.breakageRiskofGlass.policyId = this.policyId ;						
+						this.extraPremium.policyId = this.policyId ;
+						this.compulsoryInsurance.policyId = this.policyId ;	
+						
+						//自选方案的保单ID设置
+						this.optionalVehicleLossInsurance.policyId = this.policyId ;
+						this.optionalCommercialThirdPartyLiabilityInsurance.policyId = this.policyId ;
+						this.optionalDriverSeatLiabilityInsurance.policyId = this.policyId ;
+						this.optionalPassengerSeatLiabilityInsurance.policyId = this.policyId ;
+						this.optionalSpontaneousCombustionLossInsurance.policyId = this.policyId ;
+						this.optionalExcludingSpecialInsurance.policyId = this.policyId ;
+						this.optionalFullVehicleEmbezzlementInsurance.policyId = this.policyId ;
+						this.optionalWadingRisk.policyId = this.policyId ;
+						this.optionalBodyScratchDamageRisk.policyId = this.policyId ;
+						this.optionalBreakageRiskofGlass.policyId = this.policyId ;
+					},
+					
+					setEveryInsurancePrice:function(){
+						this.vehicleLossInsurance.InsurancePrice = (this.carOffer * 0.009 + 342).toFixed(1);
+						this.commercialThirdPartyLiabilityInsurance.InsurancePrice = (952).toFixed(1) ;
+						this.driverSeatLiabilityInsurance.InsurancePrice = (80).toFixed(1) ;
+						this.passengerSeatLiabilityInsurance.InsurancePrice = (240).toFixed(1) ;
+						this.spontaneousCombustionLossInsurance.InsurancePrice = (this.carOffer * 0.0015).toFixed(1) ;
+						this.excludingSpecialInsurance.InsurancePrice = ((this.carOffer * 0.009 + 342 + 952) * 0.15).toFixed(1)  ;
+						this.fullVehicleEmbezzlementInsurance.InsurancePrice = (this.carOffer * 0.005 + 200).toFixed(1) ;
+						this.wadingRisk.InsurancePrice = (this.carOffer * 0.001).toFixed(1) ;
+						this.bodyScratchDamageRisk.InsurancePrice = (this.carOffer * 0.004).toFixed(1) ;
+						this.breakageRiskofGlass.InsurancePrice = (this.carOffer * 0.002).toFixed(1) ;						
+						this.extraPremium.InsurancePrice = (this.score * 200).toFixed(1) ;
+						this.compulsoryInsurance.InsurancePrice = (950).toFixed(1) ;
+						
+						//自选方案
+						this.optionalVehicleLossInsurance.InsurancePrice = (this.carOffer * 0.009 + 342).toFixed(1);
+						this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice = (952).toFixed(1) ;
+						this.optionalDriverSeatLiabilityInsurance.InsurancePrice = (80).toFixed(1) ;
+						this.optionalPassengerSeatLiabilityInsurance.InsurancePrice = (240).toFixed(1) ;
+						this.optionalSpontaneousCombustionLossInsurance.InsurancePrice = (this.carOffer * 0.0015).toFixed(1) ;
+						this.optionalExcludingSpecialInsurance.InsurancePrice = ((this.carOffer * 0.009 + 342 + 952) * 0.15).toFixed(1)  ;
+						this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice = (this.carOffer * 0.005 + 200).toFixed(1) ;
+						this.optionalWadingRisk.InsurancePrice = (this.carOffer * 0.001).toFixed(1) ;
+						this.optionalBodyScratchDamageRisk.InsurancePrice = (this.carOffer * 0.004).toFixed(1) ;
+						this.optionalBreakageRiskofGlass.InsurancePrice = (this.carOffer * 0.002).toFixed(1) ;
+			
+						this.commercialInsurance1 = (Number(this.vehicleLossInsurance.InsurancePrice)
+													+Number(this.commercialThirdPartyLiabilityInsurance.InsurancePrice)
+													+Number(this.driverSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.passengerSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.spontaneousCombustionLossInsurance.InsurancePrice)
+													+Number(this.excludingSpecialInsurance.InsurancePrice)
+													+Number(this.extraPremium.InsurancePrice)).toFixed(1)  ;
+						
+						this.commercialInsurance2 = (Number(this.vehicleLossInsurance.InsurancePrice)
+													+Number(this.commercialThirdPartyLiabilityInsurance.InsurancePrice)
+													+Number(this.driverSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.passengerSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.spontaneousCombustionLossInsurance.InsurancePrice)
+													+Number(this.extraPremium.InsurancePrice)).toFixed(1) ;
+						
+						this.commercialInsurance3 = (Number(this.vehicleLossInsurance.InsurancePrice)
+													+Number(this.commercialThirdPartyLiabilityInsurance.InsurancePrice)
+													+Number(this.driverSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.passengerSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.spontaneousCombustionLossInsurance.InsurancePrice)
+													+Number(this.excludingSpecialInsurance.InsurancePrice)
+													+Number(this.fullVehicleEmbezzlementInsurance.InsurancePrice)
+													+Number(this.wadingRisk.InsurancePrice)
+													+Number(this.bodyScratchDamageRisk.InsurancePrice)
+													+Number(this.breakageRiskofGlass.InsurancePrice)
+													+Number(this.extraPremium.InsurancePrice)).toFixed(1) ;
+						
+						this.commercialInsurance4 = (Number(this.optionalVehicleLossInsurance.InsurancePrice)
+													+Number(this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice)
+													+Number(this.optionalDriverSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.optionalPassengerSeatLiabilityInsurance.InsurancePrice)
+													+Number(this.optionalSpontaneousCombustionLossInsurance.InsurancePrice)
+													+Number(this.optionalExcludingSpecialInsurance.InsurancePrice)
+													+Number(this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice)
+													+Number(this.optionalWadingRisk.InsurancePrice)
+													+Number(this.optionalBodyScratchDamageRisk.InsurancePrice)
+													+Number(this.optionalBreakageRiskofGlass.InsurancePrice)
+													+Number(this.extraPremium.InsurancePrice)).toFixed(1) ;
+						
+						this.totalPremium1 = (Number(this.commercialInsurance1) + 950).toFixed(1) ;
+						this.totalPremium2 = (Number(this.commercialInsurance2) + 950).toFixed(1) ;
+						this.totalPremium3 = (Number(this.commercialInsurance3) + 950).toFixed(1) ;
+						this.totalPremium4 = (Number(this.commercialInsurance4) + 950).toFixed(1) ;
+					},
+					
+					getCommercialInsurance4AndTotalPremium4:function(){
+						this.commercialInsurance4 = (Number(this.optionalVehicleLossInsurance.InsurancePrice)
+						+Number(this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice)
+						+Number(this.optionalDriverSeatLiabilityInsurance.InsurancePrice)
+						+Number(this.optionalPassengerSeatLiabilityInsurance.InsurancePrice)
+						+Number(this.optionalSpontaneousCombustionLossInsurance.InsurancePrice)
+						+Number(this.optionalExcludingSpecialInsurance.InsurancePrice)
+						+Number(this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice)
+						+Number(this.optionalWadingRisk.InsurancePrice)
+						+Number(this.optionalBodyScratchDamageRisk.InsurancePrice)
+						+Number(this.optionalBreakageRiskofGlass.InsurancePrice)
+						+Number(this.extraPremium.InsurancePrice)).toFixed(1) ;
+						
+						this.totalPremium4 = (Number(this.commercialInsurance4) + 950).toFixed(1) ;
+					},
+					
+					commercialThirdPartyLiabilityInsuranceSelect:function(){
+						if($("#cTPLI").val() == "1"){
+							this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice = (952).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#cTPLI").val() == "0"){
+							this.optionalCommercialThirdPartyLiabilityInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					driverSeatLiabilityInsuranceSelect:function(){
+						if($("#dSLI").val() == "1"){
+							this.optionalDriverSeatLiabilityInsurance.InsurancePrice = (80).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#dSLI").val() == "0"){
+							this.optionalDriverSeatLiabilityInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					passengerSeatLiabilityInsuranceSelect:function(){
+						if($("#pSLI").val() == "1"){
+							this.optionalPassengerSeatLiabilityInsurance.InsurancePrice = (240).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#pSLI").val() == "0"){
+							this.optionalPassengerSeatLiabilityInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					spontaneousCombustionLossInsuranceSelect:function(){
+						if($("#sCLI").val() == "1"){
+							this.optionalSpontaneousCombustionLossInsurance.InsurancePrice = (this.carOffer * 0.0015).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#sCLI").val() == "0"){
+							this.optionalSpontaneousCombustionLossInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					excludingSpecialInsuranceSelect:function(){
+						if($("#eSI").val() == "1"){
+							this.optionalExcludingSpecialInsurance.InsurancePrice = ((this.carOffer * 0.009 + 342 + 952) * 0.15).toFixed(1)  ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#eSI").val() == "0"){
+							this.optionalExcludingSpecialInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					fullVehicleEmbezzlementInsuranceSelect:function(){
+						if($("#fVEI").val() == "1"){
+							this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice = (this.carOffer * 0.005 + 200).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#fVEI").val() == "0"){
+							this.optionalFullVehicleEmbezzlementInsurance.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					wadingRiskSelect:function(){
+						if($("#wR").val() == "1"){
+							this.optionalWadingRisk.InsurancePrice = (this.carOffer * 0.001).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#wR").val() == "0"){
+							this.optionalWadingRisk.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					bodyScratchDamageRiskSelect:function(){
+						if($("#bSDR").val() == "1"){
+							this.optionalBodyScratchDamageRisk.InsurancePrice = (this.carOffer * 0.004).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#bSDR").val() == "0"){
+							this.optionalBodyScratchDamageRisk.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					breakageRiskofGlassSelect:function(){
+						if($("#bRG").val() == "1"){
+							$("#vLI").val("1") ;
+							this.optionalBreakageRiskofGlass.InsurancePrice = (this.carOffer * 0.002).toFixed(1) ;
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#bRG").val() == "0"){
+							this.optionalBreakageRiskofGlass.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					vehicleLossInsuranceSelect:function(){
+						if($("#vLI").val() == "1"){
+							$("#sCLI").attr("disabled",false).css("background-color","#FFFFFF");
+							$("#eSI").attr("disabled",false).css("background-color","#FFFFFF");
+							$("#bSDR").attr("disabled",false).css("background-color","#FFFFFF");
+							$("#bRG").attr("disabled",false).css("background-color","#FFFFFF");
+							$("#sCLI").val("1") ;
+							$("#eSI").val("1") ;
+							$("#bSDR").val("1") ;
+							$("#bRG").val("1") ;
+							this.optionalVehicleLossInsurance.InsurancePrice = (this.carOffer * 0.009 + 342).toFixed(1);
+							this.optionalSpontaneousCombustionLossInsurance.InsurancePrice = (this.carOffer * 0.0015).toFixed(1) ;
+							this.optionalExcludingSpecialInsurance.InsurancePrice = ((this.carOffer * 0.009 + 342 + 952) * 0.15).toFixed(1)  ;
+							this.optionalBodyScratchDamageRisk.InsurancePrice = (this.carOffer * 0.004).toFixed(1) ;
+							this.optionalBreakageRiskofGlass.InsurancePrice = (this.carOffer * 0.002).toFixed(1) ;	
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}else if($("#vLI").val() == "0"){
+							$("#sCLI").attr("disabled",true).css("background-color","#EEEEEE");
+							$("#eSI").attr("disabled",true).css("background-color","#EEEEEE");
+							$("#bSDR").attr("disabled",true).css("background-color","#EEEEEE");
+							$("#bRG").attr("disabled",true).css("background-color","#EEEEEE");
+							$("#sCLI").val("0") ;
+							$("#eSI").val("0") ;
+							$("#bSDR").val("0") ;
+							$("#bRG").val("0") ;
+							this.optionalVehicleLossInsurance.InsurancePrice = (0).toFixed(1);
+							this.optionalSpontaneousCombustionLossInsurance.InsurancePrice = (0).toFixed(1) ;
+							this.optionalExcludingSpecialInsurance.InsurancePrice = (0).toFixed(1)  ;
+							this.optionalBodyScratchDamageRisk.InsurancePrice = (0).toFixed(1) ;
+							this.optionalBreakageRiskofGlass.InsurancePrice = (0).toFixed(1);
+							this.getCommercialInsurance4AndTotalPremium4() ;
+						}
+					},
+					
+					//提交高性价比方案
+					highCostPerformanceRatio:function(){
+						var params = {
+							"vehicleLossInsurance":JSON.stringify(this.vehicleLossInsurance),
+							"commercialThirdPartyLiabilityInsurance":JSON.stringify(this.commercialThirdPartyLiabilityInsurance),
+							"driverSeatLiabilityInsurance":JSON.stringify(this.driverSeatLiabilityInsurance),
+							"passengerSeatLiabilityInsurance":JSON.stringify(this.passengerSeatLiabilityInsurance),
+							"spontaneousCombustionLossInsurance":JSON.stringify(this.spontaneousCombustionLossInsurance),
+							"excludingSpecialInsurance":JSON.stringify(this.excludingSpecialInsurance),
+							"extraPremium":JSON.stringify(this.extraPremium),
+							"compulsoryInsurance":JSON.stringify(this.compulsoryInsurance),
+							"policyId":this.policyId,
+							"insuranceAmount":this.totalPremium1
+						};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/highCostPerformanceRatio.action",params,{emulateJSON:true}).then(
+						function(res){
+							location.href='submission-insurance.html?carOwnerId='+this.carOwnerId
+										+'&policyId='+this.policyId+'&carOffer='+this.carOffer
+										+'&score='+this.score+'&carId='+this.carId+'&totalPrice='+this.totalPremium1
+										+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2
+										+'&autocheck3='+this.autocheck3+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					//提交基本保障方案
+					basicProtection:function(){
+						var params = {
+							"vehicleLossInsurance":JSON.stringify(this.vehicleLossInsurance),
+							"commercialThirdPartyLiabilityInsurance":JSON.stringify(this.commercialThirdPartyLiabilityInsurance),
+							"driverSeatLiabilityInsurance":JSON.stringify(this.driverSeatLiabilityInsurance),
+							"passengerSeatLiabilityInsurance":JSON.stringify(this.passengerSeatLiabilityInsurance),
+							"spontaneousCombustionLossInsurance":JSON.stringify(this.spontaneousCombustionLossInsurance),
+							"extraPremium":JSON.stringify(this.extraPremium),
+							"compulsoryInsurance":JSON.stringify(this.compulsoryInsurance),
+							"policyId":this.policyId,
+							"insuranceAmount":this.totalPremium2
+						};
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/basicProtection.action",params,{emulateJSON:true}).then(
+						function(res){
+							location.href='submission-insurance.html?carOwnerId='+this.carOwnerId
+							+'&policyId='+this.policyId+'&carOffer='+this.carOffer
+							+'&score='+this.score+'&carId='+this.carId+'&totalPrice='+this.totalPremium2
+							+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2
+							+'&autocheck3='+this.autocheck3+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					//提交周全保障方案
+					comprehensiveGuarantee:function(){
+						var params = {
+							"vehicleLossInsurance":JSON.stringify(this.vehicleLossInsurance),
+							"commercialThirdPartyLiabilityInsurance":JSON.stringify(this.commercialThirdPartyLiabilityInsurance),
+							"driverSeatLiabilityInsurance":JSON.stringify(this.driverSeatLiabilityInsurance),
+							"passengerSeatLiabilityInsurance":JSON.stringify(this.passengerSeatLiabilityInsurance),
+							"spontaneousCombustionLossInsurance":JSON.stringify(this.spontaneousCombustionLossInsurance),	
+							"excludingSpecialInsurance":JSON.stringify(this.excludingSpecialInsurance),
+							"fullVehicleEmbezzlementInsurance":JSON.stringify(this.fullVehicleEmbezzlementInsurance),
+							"wadingRisk":JSON.stringify(this.wadingRisk),
+							"bodyScratchDamageRisk":JSON.stringify(this.bodyScratchDamageRisk),
+							"breakageRiskofGlass":JSON.stringify(this.breakageRiskofGlass),
+							"extraPremium":JSON.stringify(this.extraPremium),
+							"compulsoryInsurance":JSON.stringify(this.compulsoryInsurance),
+							"policyId":this.policyId,
+							"insuranceAmount":this.totalPremium3
+						};					
+
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/comprehensiveGuarantee.action",params,{emulateJSON:true}).then(
+						function(res){
+							location.href='submission-insurance.html?carOwnerId='+this.carOwnerId
+										+'&policyId='+this.policyId+'&carOffer='+this.carOffer
+										+'&score='+this.score+'&carId='+this.carId+'&totalPrice='+this.totalPremium3
+										+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2
+										+'&autocheck3='+this.autocheck3+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					backToCarInfo:function(){
+						location.href='buy-insurance.html?carId='+this.carId+'&carOwnerId='
+						+this.carOwnerId+'&policyId='+this.policyId+'&carOffer='+this.carOffer
+						+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2
+						+'&autocheck3='+this.autocheck3+'&autocheck4='+this.autocheck4;
+					},
+					
+					//提交自选方案
+					optionalScheme:function(){
+						var params = {
+							"vehicleLossInsurance":JSON.stringify(this.optionalVehicleLossInsurance),
+							"commercialThirdPartyLiabilityInsurance":JSON.stringify(this.optionalCommercialThirdPartyLiabilityInsurance),
+							"driverSeatLiabilityInsurance":JSON.stringify(this.optionalDriverSeatLiabilityInsurance),
+							"passengerSeatLiabilityInsurance":JSON.stringify(this.optionalPassengerSeatLiabilityInsurance),
+							"spontaneousCombustionLossInsurance":JSON.stringify(this.optionalSpontaneousCombustionLossInsurance),	
+							"excludingSpecialInsurance":JSON.stringify(this.optionalExcludingSpecialInsurance),
+							"fullVehicleEmbezzlementInsurance":JSON.stringify(this.optionalFullVehicleEmbezzlementInsurance),
+							"wadingRisk":JSON.stringify(this.optionalWadingRisk),
+							"bodyScratchDamageRisk":JSON.stringify(this.optionalBodyScratchDamageRisk),
+							"breakageRiskofGlass":JSON.stringify(this.optionalBreakageRiskofGlass),
+							"extraPremium":JSON.stringify(this.extraPremium),
+							"compulsoryInsurance":JSON.stringify(this.compulsoryInsurance),
+							"policyId":this.policyId,
+							"insuranceAmount":this.totalPremium4
+						};					
+
+						this.$http.post(protocol+"//"+host+":"+port+"/buyInsurance/optionalScheme.action",params,{emulateJSON:true}).then(
+						function(res){
+							/* localStorage.setItem('carInfo',JSON.stringify(this.carInfo)); */
+							location.href='submission-insurance.html?carOwnerId='+this.carOwnerId
+											+'&policyId='+this.policyId+'&carOffer='+this.carOffer
+											+'&score='+this.score+'&carId='+this.carId+'&totalPrice='+this.totalPremium4
+											+'&autocheck1='+this.autocheck1+'&autocheck2='+this.autocheck2
+											+'&autocheck3='+this.autocheck3+'&autocheck4='+this.autocheck4;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+									
+			    }
+					
+			});
+		</script>
+	</body>
+
+</html>

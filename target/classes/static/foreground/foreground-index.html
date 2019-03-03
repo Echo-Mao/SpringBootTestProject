@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>七武海车险投保系统首页</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" type="image/x-icon" href="../img/logo.png" />
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/jquery.params.js"></script> 
+		<style>
+			[v-cloak]{
+				display:none ;
+			}
+		</style>
+	</head>
+	
+	<body>
+	<div id="vehicleInsuranceValuation">
+		<!--导航栏-->
+		<div>
+			<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+			<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+			<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+			<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+			<a v-if='loginInfo!=null && loginInfo.loginId!=""' href="/outLogin.action" style="color: #000000;position: absolute;top:7px;right: 168px;">退出登录</a>
+		</div>
+		
+		<div style="position: absolute;top: 52px;left: 167px;width: 1250px;">
+			<div class="row">
+	    		<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: -10px;text-align: right;">
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: -6px;padding-left: 0;">		
+						<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海车险</div>
+					</div>
+				
+				<div class="col-lg-6 col-md-6 col-sm-6" style="text-align:center;">
+					<a href="understand-insurance.html" style="font-size: 20px;font-weight: 400;color: #000000;">了解车险</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="buy-insurance.html" style="font-size: 20px;font-weight: 400;color: #000000;">购买车险</a>
+				</div>
+				
+				<div class="col-lg-2 col-md-2 col-sm-2 col-md-offset-1" >		
+					<img  v-if='loginInfo==null' src="../img/d.PNG" onclick="location.href='/foreground/foreground-login.html'" style="margin-top: -3px;"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a v-if='loginInfo==null' href="foreground-register.html" style="font-size: 17px;font-weight: 300;color: #000000;">注册</a>
+				</div>
+	    	</div>
+		</div>
+		
+		<!--轮播图-->
+		<div id="myCarousel" class="carousel slide" style="position: absolute;top: 100px;left: 167px;width: 1250px;height: 583;">
+		    <!-- 轮播（Carousel）指标 -->
+		    <ol class="carousel-indicators">
+		        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+		        <li data-target="#myCarousel" data-slide-to="1"></li>
+		        <li data-target="#myCarousel" data-slide-to="2"></li>
+		    </ol>   
+		    <!-- 轮播（Carousel）项目 -->
+		    <div class="carousel-inner">
+		        <div class="item active">
+		            <img src="../img/c1.jpg" alt="First slide">
+		        </div>
+		        <div class="item">
+		            <img src="../img/c2.jpg" alt="Second slide">
+		        </div>
+		        <div class="item">
+		            <img src="../img/c3.jpg" alt="Third slide">
+		        </div>
+		    </div>
+		</div>
+		
+		
+			<!--透明度背景-->
+			<div style="background-color: #000000; width: 350px;height: 380px;opacity: 0.6;position: absolute;top: 200px;left: 300px;"></div>
+			<!--快速报价form表单-->
+			<div style="width: 310px;height: 360px; position: absolute;top: 210px;left: 320px;">
+				<form>
+					<table style="width: 310px;height: 360px;">
+						<tr>
+							<td colspan="2" align="center"><div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">车险报价</div></td>
+						</tr>
+						<tr>
+							<td align="right"><font style="font-size: 18px;color: #FFFFFF;font-weight: 600;font-family: '微软雅黑';">&nbsp;&nbsp;&nbsp;&nbsp;省份</font></td>
+							<td align="center">
+								<select v-model="province" @change="getCityByProvinceId()" class="form-control" style="width: 180px;">
+								    <option value="-1">请选择省份</option>
+									<option v-for="province in provinceList" :value="province.provinceId">{{province.province}}</option>
+							    </select>
+							</td>
+						</tr>
+						<tr>
+							<td align="right"><font style="font-size: 18px;color: #FFFFFF;font-weight: 600;font-family: '微软雅黑';">城市</font></td>
+							<td align="center">
+								<select v-model="city" class="form-control" style="width: 180px;">
+								    <option value="-1">请选择城市</option>
+									<option v-for="city in cityList" :value="city.cityId">{{city.city}}</option>
+							    </select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td align="right"><font style="font-size: 18px;color: #FFFFFF;font-weight: 600;font-family: '微软雅黑';">车价</font></td>
+							<td align="center">
+								<input type="text" class="form-control" id="name" placeholder="请输入车价" style="background-color: #FFFFFF; width: 180px;" v-model="carOffer" maxlength="9">
+							</td>
+						</tr>
+						<tr>
+							<td align="right"><font style="font-size: 18px;color: #FFFFFF;font-weight: 600;font-family: '微软雅黑';">手机</font></td>
+							<td align="center">
+								<input type="text" class="form-control" id="name" placeholder="请输入手机号码" style="background-color: #FFFFFF; width: 180px;" v-model="phone" maxlength="11">
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" align="center">
+								<a @click="checkQuickQuote()" role="button" class="btn btn-primary btn-lg">&nbsp;快&nbsp;速&nbsp;报&nbsp;价&nbsp;</a>
+							</td>
+						</tr>
+					</table>
+				</form>
+				
+			</div>
+		</div>
+		
+		<!--底部圆形图片链接-->
+		<div>
+			<img onclick="location.href='my-insurance.html'" src="../img/y1.PNG"  style="position: absolute;top: 683px; left: 600px;" title="保单查询">
+			<img onclick="location.href='buy-insurance.html'" src="../img/y2.PNG"  style="position: absolute;top: 683px; left: 760px;" title="购买车险">
+			<img onclick="location.href='my-insurance.html'" src="../img/y3.PNG"  style="position: absolute;top: 683px; left: 920px;" title="保单修改">
+		</div>
+		
+		
+		<script type="text/javascript">	
+			var protocol = window.location.protocol;
+			var host = window.location.hostname;
+			var port = window.location.port;
+			var insuranceQuote = new Vue({
+				el:"#vehicleInsuranceValuation",
+				data:{
+					provinceList:[],
+					cityList:[],
+					carOffer:'',
+					phone:'',
+					province:-1,
+					city:-1,
+					loginInfo:{
+						loginId:'',
+						loginName:'',
+						loginPwd:'',
+						loginStatus:''
+					}	
+				},
+				mounted:function(){
+					//查询登陆信息
+			        this.getLoginInfo();
+					//获取所有的省份
+					this.getProvinces();
+				},
+				methods:{
+					//获取登陆信息
+					getLoginInfo:function(){
+						this.$http.post("/getLoginInfo.action").then(
+								function(res){
+									this.loginInfo=res.data.loginInfo;
+									return;
+									//alert(this.loginInfo.loginId);
+								},
+								function(res){
+									this.loginInfo=null;
+								}
+							);
+					},
+					
+					//查询所有省份				
+					getProvinces:function(){
+						var params = {};
+						this.$http.post(protocol+"//"+host+":"+port+"/privince/findAllProvince.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.provinceList = res.data.provinceList ;
+							
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					//根据省份查询城市
+					getCityByProvinceId:function(){
+						var params = {"provinceId":this.province};
+						this.$http.post(protocol+"//"+host+":"+port+"/city/findAllCityByProinceId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.cityList = res.data.cityList ;
+							this.city = -1 ;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					
+					checkQuickQuote:function(){
+						if(this.province < 0){
+							alert("您还未选择所在省份") ;
+							return ;
+						}
+						if(this.city < 0){
+							alert("您还未选择所在地区") ;
+							return ;
+						}
+						
+						var regexCarOffer = /^(?:(?!0)\d{1,8}|10{8})$/ ;
+						if(this.carOffer == '' ){
+							alert("您还未填写车价号") ;
+							return ;
+						}
+						if(!regexCarOffer.test(this.carOffer)){
+							alert("输入有误，请重新输入") ;
+							return ;
+						}
+						
+						//手机号正则
+						var regexPhone = /(?:^1[3456789]|^9[28])\d{9}$/ ;
+						if(this.phone == '' ){
+							alert("您还未填写手机号") ;
+							return ;
+						}
+						if(!regexPhone.test(this.phone)){
+							alert("手机号无效，请输入有效号码") ;
+							return ;
+						}
+						
+						location.href='insurance-valuation.html?carOffer='+this.carOffer ;
+					}
+			    }		
+			});
+		</script>
+	</body>
+
+</html>

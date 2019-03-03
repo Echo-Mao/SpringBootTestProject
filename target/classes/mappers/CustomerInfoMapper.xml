@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.user.dao.ICustomerDao">
+	<resultMap type="PolicyInfo" id="policyInfoWithTable">
+		<id property="policyId" column="policyId" />
+		<result property="policyNum" column="policynumber" />
+		<result property="policyHolderId" column="applicant" />
+		<result property="insurantId" column="insuredperson" />
+		<result property="carOwnerId" column="carowner" />
+		<result property="empId" column="empid" />
+		<result property="userId" column="userid" />
+		<result property="carId" column="carid" />
+		<result property="insuranceAmount" column="insuranceamount" />
+		<result property="insuranceTypes" column="insurancename" />
+		<result property="insuranceCompany" column="insurancecompany" />
+		<result property="billStartDate" column="billstartdate" />
+		<result property="billEndDate" column="billenddate" />
+		<result property="policyStatus" column="policystatusid" />
+		<result property="createTime" column="policycreatedate" />
+		<result property="modifyTime" column="policymodifydate" />
+		<result property="viewState" column="policystatus" />
+		<association property="policyHolder"
+			javaType="RelatedPersonnel">
+			<id column="ipid" property="personnelId" />
+			<result column="Ipname" property="personnelName" />
+			<result column="ippapertype" property="paperTypeId" />
+			<result column="ippapernum" property="paperNum" />
+			<result column="ipphone" property="phoneNum" />
+			<result column="ipemail" property="email" />
+			<result column="ipadress" property="address" />
+		</association>
+		<association property="operator" javaType="EmpInfo">
+			<id column="empId" property="empId" />
+			<result column="empname" property="empName" />
+		</association>
+		<association property="paperInfo" javaType="PaperInfo">
+			<id column="paperid" property="paperId" />
+			<result column="papertype" property="paperType" />
+		</association>
+		<association property="province" javaType="Province">
+			<id column="pid" property="pid" />
+			<result column="provinceid" property="provinceId" />
+			<result column="province" property="province" />
+		</association>
+		<association property="city" javaType="City">
+			<id column="cid" property="cid" />
+			<result column="cityid" property="cityId" />
+			<result column="city" property="city" />
+		</association>
+	</resultMap>
+
+	<!-- 高级查询分页 -->
+	<select id="findAllByCondition" parameterType="CustomerCondition"
+		resultMap="policyInfoWithTable">
+		select  pi.carowner,pi.policyid,pi.applicant,pi.insuredperson,pi.empid,ipi.ipphone,ipi.ipname,ipi.ipadress,
+		ei.empname,ipi.ipprovincenum,ipi.Ipcity,pvi.province,pvi.provinceid,ci.city,ci.cityId from policy_info  pi
+		inner join  Insurance_personnel_info ipi on
+		pi.applicant=ipi.ipid inner join emp_info ei
+		on pi.empid=ei.empid inner join  province_info pvi on ipi.ipprovincenum=pvi.provinceid
+		inner join city_info ci on ci.cityid=ipi.Ipcity <include refid="customerCondition"/>
+	</select>
+	
+	<!-- 根据车主id查车辆信息 -->
+	<select id="findCarOwnerInfoById" parameterType="int" resultMap="policyInfoWithTable">
+		select ipi.Ipname,ipi.ipid,ipi.ippapertype,ipi.ippapernum,ipi.ipphone,ipi.ipemail,ipi.ipprovincenum,
+		ipi.Ipcity,ipi.ipadress,pi.papertype,pvi.province,ci.city from Insurance_personnel_info ipi inner join paper_info pi 
+		on ipi.ippapertype=pi.paperid inner join  province_info pvi on ipi.ipprovincenum=pvi.provinceid
+		inner join city_info ci on ci.cityid=ipi.Ipcity where ipi.ipid=#{id}
+	</select>
+	
+	<!-- 员工查询条件 -->
+	<sql id="customerCondition">
+	 <where>
+		<if test='personnelName != null and personnelName != ""'>
+    			and ipi.ipname like '%${personnelName}%'
+    		</if>
+    		<if test='phoneNum != null and phoneNum != ""'>
+    			and ipi.ipphone like '%${phoneNum}%'
+    		</if>
+    		<if test='empName != null and empName!= ""'>
+    			and ei.empname like '%${empName}%'
+    		</if>
+    		<if test='empId != null and empId>0'>
+    			and ei.empid =#{empId}
+    		</if>
+    		<if test='provinceId != null and provinceId > 0'>
+    			and ipi.ipprovincenum = #{provinceId}
+    		</if>
+    		<if test='cityId != null and cityId > 0'>
+    			and ipi.ipcity = #{cityId}
+    		</if>
+    </where>
+	</sql>
+</mapper>

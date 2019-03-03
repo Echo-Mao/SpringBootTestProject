@@ -1,0 +1,123 @@
+*{
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+body{
+	width: 80%;
+	margin: auto;
+}
+#base{
+	width: 100%;
+}
+a{
+	text-decoration: none;
+	color: black;
+}
+.topage{
+	float: right;
+	padding-right: 20px;
+	padding-left: 10px;
+}
+/* .top_nav{
+	height: 30px;
+	line-height: 30px;
+	font-size: 16px;
+	border-bottom: gray solid 1px;
+	vertical-align: middle;
+}
+.top_nav .topage{
+	float: right;
+	padding-right: 20px;
+	padding-left: 10px;
+}
+.top_nav #rightborder{
+	
+	border-right: black solid 1px;
+} */
+.top_title{
+	padding-top: 30px;
+	padding-left: 20px;
+	margin-bottom: 10px;
+}
+/* .top_title .htitle b{
+	color: red;
+	font-size: 40px;
+	margin-right: 20px;
+} */
+.top_title span{
+	font-size: 20px;
+	margin: 5px;
+}
+/* .top_title span b{
+	color: red;
+	font-size: 25px;
+	margin: 10px;
+} */
+
+
+
+
+.middle_nav{
+	width: 1200px;
+	height: 50px;
+	font-size: 20px;
+	background-color: #E6E6E6;
+	border-bottom: solid red 2px;
+	vertical-align: middle;
+}
+.middle_nav div{
+	width: 150px;
+	line-height: 48px;
+	padding-left: 30px;
+	float: left;
+}
+.middle_nav .myfile{
+	color: white;
+	background-color: red;
+}
+.middle_nav .myinsuerans{
+	background-color: #CCCCCC;
+}
+
+.body{
+	width: 1000px;
+	margin-top: 10px;
+}
+.body div{
+	float: left;
+}
+.body .nav_left{
+	width: 150px;
+	border: solid gray 1px;
+	margin-right: 10px;
+}
+.body .nav_left div{
+	width: 100%;
+	height: 45px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 45px;
+	background-color: #B8EECF;
+}
+
+
+
+.body .content{
+	width: 780px;
+	border: solid gray 1px;
+}
+.body .content div{
+	width: 100%;
+	padding: 5px 20px;
+}
+
+
+
+
+
+
+
+
+
+

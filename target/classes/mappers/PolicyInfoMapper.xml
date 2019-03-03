@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IPolicyDao">
+    <resultMap type="policyInfo" id="policyInfoWithTable">
+        <id property="policyId" column="POLICYID"/>
+        <result property="policyNum" column="POLICYNUMBER"/>
+        <result property="policyHolderId" column="APPLICANT"/>
+        <result property="insurantId" column="INSUREDPERSON"/>
+        <result property="carOwnerId" column="CAROWNER"/>
+        <result property="empId" column="EMPID"/>
+        <result property="userId" column="USERID"/>
+        <result property="carId" column="CARID"/>
+        <result property="insuranceAmount" column="INSURANCEAMOUNT"/>
+        <result property="insuranceTypes" column="INSURANCENAME"/>
+        <result property="insuranceCompany" column="INSURANCECOMPANY"/>
+        <result property="billStartDate" column="BILLSTARTDATE"/>
+        <result property="billEndDate" column="BILLENDDATE"/>
+        <result property="policyStatus" column="POLICYSTATUSID"/>
+        <result property="createTime" column="POLICYCREATEDATE"/>
+        <result property="modifyTime" column="POLICYMODIFYDATE"/>
+        <result property="viewState" column="POLICYSTATUS"/>
+        <association property="policyHolder" column="APPLICANT" javaType="relatedPersonnel"
+            select="com.nbui.policy.dao.IRelatedPersonnelDao.findRelatedPersonnelInfoById"></association>
+        <association property="insurant" column="INSUREDPERSON" javaType="relatedPersonnel"
+            select="com.nbui.policy.dao.IRelatedPersonnelDao.findRelatedPersonnelInfoById"></association>
+        <association property="carOwner" column="CAROWNER" javaType="relatedPersonnel"
+            select="com.nbui.policy.dao.IRelatedPersonnelDao.findRelatedPersonnelInfoById"></association>
+        <association property="operator" column="EMPID" javaType="empInfo"
+            select="com.nbui.employee.dao.IEmpDao.findEmpInfoById"></association>
+        <association property="transactor" column="USERID" javaType="userInfo"
+            select="com.nbui.user.dao.IUserDao.findUserInfoById"></association>
+        <association property="carInfo" column="CARID" javaType="carInfo"
+            select="com.nbui.policy.dao.ICarInfoDao.findCarById"></association>
+        <association property="statusInfo" column="POLICYSTATUSID" javaType="policyStatus"
+            select="com.nbui.policy.dao.IPolicyStatusDao.findStatusById"></association>
+    </resultMap>
+    
+    
+    
+    <sql id="allOfPolicyInfo">
+        POLICYID,POLICYNUMBER,APPLICANT,INSUREDPERSON,CAROWNER,EMPID,USERID
+        ,CARID,INSURANCEAMOUNT,IN	SURANCENAME,INSURANCECOMPANY,BILLSTARTDATE
+        ,,BILLENDDATE,POLICYSTATUSID,POLICYCREATEDATE,POLICYMODIFYDATE,POLICYSTATUS
+    </sql>
+    <select id="listPolicyBriefById" parameterType="com.nbui.policy.condition.PolicyBriefCondition" resultType="com.nbui.policy.entity.PolicyBrief">
+    	select pi.policynumber policyNumber,pi.policycreatedate policyCreateDate,pi.BILLSTARTDATe  billStartDate,
+    	pi.insurancename insuranceName,pi.insuranceamount insuranceAmount,car.CARPLATENUMBER carplateNumber,
+		person.IPNAMe ipname,status.POLICYSTATUS policystatus 
+		from policy_info pi 
+		inner join car_info car on car.CARID=pi.CARID 
+		inner join insurance_personnel_info person on person.IPID=pi.INSUREDPERSON 
+	    inner join policy_status status on pi.POLICYSTATUSID=status.STATUSID
+	     <where>
+	    <if test="id!=null">
+	      and pi.userid=#{id}
+	    </if>
+	    <if test="policystatus2!='选择全部'">
+	   	 and 	status.POLICYSTATUS=#{policystatus2}
+	    </if>
+	     <if test="search2!=''">
+	    and 	(pi.policyNumber like '${search2}%' or pi.insurancename=#{search2} or car.CARPLATENUMBER=#{search2} or person.IPNAMe=#{search2})
+	    </if>
+	    </where>
+	    	and pi.POLICYSTATUSID&gt;7 and pi.policystatus=1
+		 
+    </select>
+    <select id="listOrderBriefById" parameterType="com.nbui.policy.condition.PolicyBriefCondition" resultType="com.nbui.policy.entity.PolicyBrief">
+    	select pi.policynumber policyNumber,pi.policycreatedate policyCreateDate,pi.BILLSTARTDATe  billStartDate,
+    	pi.insurancename insuranceName,pi.insuranceamount insuranceAmount,car.CARPLATENUMBER carplateNumber,
+		person.IPNAMe ipname,status.POLICYSTATUS policystatus 
+		from policy_info pi 
+		inner join car_info car on car.CARID=pi.CARID 
+		inner join insurance_personnel_info person on person.IPID=pi.INSUREDPERSON 
+	    inner join policy_status status on pi.POLICYSTATUSID=status.STATUSID
+	     <where>
+	    <if test="id!=null">
+	      and pi.userid=#{id}
+	    </if>
+	    <if test="policystatus1!='选择全部'">
+	   	 and 	status.POLICYSTATUS=#{policystatus1}
+	    </if>
+	     <if test="policyCreateDate=='三个月以前的订单'">
+	    and 	pi.policycreatedate&lt;(sysdate-90)
+	    </if>  
+	     <if test="policyCreateDate=='三个月以内的订单'">
+	    and 	pi.policycreatedate&gt;(sysdate-90)
+	    </if>
+	     <if test="search1!=''">
+	    and 	(pi.policyNumber=#{search1} or pi.insurancename=#{search1} or car.CARPLATENUMBER=#{search1} or person.IPNAMe=#{search1})
+	    </if>
+	    </where>
+	    and pi.POLICYSTATUSID&lt;4	and pi.policystatus=1
+
+    </select>
+    	<update id="deleteBypolicyNumber" parameterType="String">
+    	update policy_info set policystatus=0 where policyNumber=#{policyNumber}   	
+    	</update>   	
+    <select id="getPolicyBase" parameterType="String" resultType="com.nbui.policy.entity.PolicyDetail">
+    	select policyNumber ，billStartDate，billEndDate,（billEndDate-billStartDate）billLong
+    	,insuranceAmount insuranceAmount
+    	 from POLICY_INFO where policyNumber=#{policyNumber} 
+    </select>
+     <select id="getPolicyApplicant" parameterType="String" resultType="com.nbui.policy.entity.PolicyDetail">
+    	select person.ipname applicantName,person.ipphone applicantPhone,
+		paper.papertype applicantPaperType,person.ippapernum applicantPaperNum
+		from POLICY_INFO pi inner join INSURANCE_PERSONNEL_INFO person on pi.applicant=person.ipid
+		inner join PAPER_INFO paper on person.ippapertype=paper.paperid
+		where  pi.policyNumber=#{policyNumber} 
+    </select>
+    <select id="getPolicyInsuredPerson" parameterType="String" resultType="com.nbui.policy.entity.PolicyDetail">
+    	select person.ipname insuredPersonName,person.ipphone insuredPersonPhone,
+		paper.papertype insuredPersonPaperType,person.ippapernum insuredPersonPaperNum
+		from POLICY_INFO pi inner join INSURANCE_PERSONNEL_INFO person on pi.insuredperson=person.ipid
+		inner join PAPER_INFO paper on person.ippapertype=paper.paperid
+		where  pi.policyNumber=#{policyNumber} 
+    </select>
+    <select id="getPolicyCarOwner" parameterType="String" resultType="com.nbui.policy.entity.PolicyDetail">
+    	select person.ipname carOwnerName,person.ipphone carOwnerPhone,
+		paper.papertype carOwnerPaperType,person.ippapernum carOwnerPaperNum
+		from POLICY_INFO pi inner join INSURANCE_PERSONNEL_INFO person on pi.carOwner=person.ipid
+		inner join PAPER_INFO paper on person.ippapertype=paper.paperid
+		where  pi.policyNumber=#{policyNumber} 
+    </select>
+    <select id="getPolicyInsuranceList" parameterType="String" resultType="com.nbui.policy.entity.InsuranceTypeBrief">
+    	select it.inname insuranceName,pis.insuranceprice insurancePrice
+		from POLICY_INFO pi inner join policy_insurance pis on pi.policyid=pis.policyid
+		inner join insurance_type it on pis.insurance=it.insuranceid
+		where  pi.policyNumber=#{policyNumber} 
+    </select>
+    
+    <resultMap type="policyInfo" id="policyByEmpMap">
+        <id property="policyId" column="policyid"/>
+        <result property="policyNum" column="policynumber"/>
+        <result property="policyHolderId" column="applicant"/>
+        <result property="insurantId" column="insuredperson"/>
+        <result property="carOwnerId" column="carowner"/>
+        <result property="empId" column="empid"/>
+        <result property="userId" column="userid"/>
+        <result property="carId" column="carid"/>
+        <result property="insuranceAmount" column="insuranceamount"/>
+        <result property="insuranceTypes" column="insurancename"/>
+        <result property="insuranceCompany" column="insurancecompany"/>
+        <result property="billStartDate" column="billstartdate"/>
+        <result property="billEndDate" column="billenddate"/>
+        <result property="policyStatus" column="policystatusid"/>
+        <result property="createTime" column="policycreatedate"/>
+        <result property="modifyTime" column="policymodifydate"/>
+        <result property="viewState" column="policystatus"/>
+        <association property="operator" javaType="EmpInfo">
+        	<id column="empid" property="empId"/>
+        	<result column="empname" property="empName"/>
+        </association>
+        <!-- 投保人信息 -->
+        <association property="policyHolder" javaType="RelatedPersonnel">
+        	<id property="personnelId" column="ap_id"/>
+        	<result property="personnelName" column="ap_name"/>
+        	<result property="paperTypeId" column="ap_papertype"/>
+        	<result property="paperNum" column="ap_papernum"/>
+        	<result property="phoneNum" column="ap_phone"/>
+        	<result property="email" column="ap_email"/>
+        	<result property="address" column="ap_address"/>
+        	<result property="createTime" column="ap_createdate"/>
+        	<result property="modifyTime" column="ap_modifydate"/>
+        	<association property="paperInfo" javaType="PaperInfo">
+        		<id property="paperId" column="ap_papertype"/>
+        		<result property="paperType" column="ap_paper"/>
+        	</association>
+        	<association property="province" javaType="Province">
+        		<id column="provinceNum" property="provinceId"/>
+        		<result column="province" property="province"/>
+        	</association>
+        	<association property="city" javaType="City">
+        		<id column="ap_city" property="cityId"/>
+        		<result column="city" property="city"/>
+        	</association>
+        </association>
+        <!-- 车主信息 -->
+        <association property="carOwner" javaType="RelatedPersonnel">
+        	<id property="personnelId" column="ca_id"/>
+        	<result property="personnelName" column="ca_name"/>
+        	<result property="paperTypeId" column="ca_papertype"/>
+        	<result property="paperNum" column="ca_papernum"/>
+        	<result property="phoneNum" column="ca_phone"/>
+        	<result property="email" column="ca_email"/>
+        	<result property="address" column="ca_adress"/>
+        	<result property="createTime" column="ca_createdate"/>
+        	<result property="modifyTime" column="ca_modifydate"/>
+        	<association property="paperInfo" javaType="PaperInfo">
+        		<id property="paperId" column="ca_papertype"/>
+        		<result property="paperType" column="ca_paper"/>
+        	</association>
+        </association>
+        <!-- 车辆信息 -->
+        <association property="carInfo" javaType="CarInfo">
+        	<id property="carId" column="carid"/>
+        	<result property="carOwnerId" column="vehicleownerid"/>
+        	<result property="brandId" column="carbrandid"/>
+        	<result property="versionId" column="carversionid"/>
+        	<result property="plateNum" column="carplatenumber"/>
+        	<result property="frameNum" column="framenum"/>
+        	<result property="engineNum" column="enginenum"/>
+        	<result property="carType" column="cartype"/>
+        	<result property="busLoad" column="carbusload"/>
+        	<result property="registerDate" column="carregisterdate"/>
+        	<result property="createTime" column="carcreatedate"/>
+        	<result property="modifyTime" column="carmodifydate"/>
+        	<result property="viewState" column="carstatus"/>
+        	<association property="brandInfo" javaType="BrandInfo">
+        		<id property="brandId" column="carbrandid"/>
+        		<result property="brandname" column="brandname"/>
+        	</association>
+        	<association property="versionInfo" javaType="VersionInfo">
+        		<id property="versionId" column="carversionid"/>
+        		<result property="versionName" column="versionname"/>
+        		<result property="carOffer" column="caroffer"/>
+        	</association>
+        </association>
+        <!-- 保单状态 -->
+        <association property="statusInfo" javaType="PolicyStatus">
+        	<id property="statusId" column="policystatusid"/>
+        	<result property="statusName" column="statusname"/>
+        </association>
+    </resultMap>
+    
+    <select id="queryPolicyByEmp" resultMap="policyByEmpMap" parameterType="PolicyCondition">
+    	select pi.policyid,
+	           pi.policynumber,
+	           pi.applicant,
+	           pi.insuredperson,
+	           pi.carowner,
+	           pi.empid,
+	           pi.userid,
+	           pi.carid,
+	           pi.insuranceamount,
+	           pi.insurancename,
+	           pi.insurancecompany,
+	           pi.billstartdate,
+	           pi.billenddate,
+	           pi.policystatusid,
+	           pi.policycreatedate,
+	           pi.policymodifydate,
+	           pi.policystatus,
+	           ps.policystatus as statusname,
+	           ei.empname,
+	           
+	           ipi_ap.ipid as ap_id,
+	           ipi_ap.ipname as ap_name,
+	           ipi_ap.ippapertype as ap_papertype,
+	           ipi_ap.ippapernum as ap_papernum,
+	           ipi_ap.ipphone as ap_phone,
+	           ipi_ap.ipemail as ap_email,
+	           ipi_ap.ipadress  as ap_address,
+	           ipi_ap.ipcreatedate as ap_createdate,
+	           ipi_ap.ipmodifydate as ap_modifydate,
+	           ipi_ap.ipprovincenum as ap_provincenum,
+	           ipi_ap.ipcity as ap_city,
+	           ap_paper.papertype as ap_paper,
+	           pri.province,
+	           cii.city,
+	           
+	           ipi_ca.ipid as ca_id,
+	           ipi_ca.ipname as ca_name,
+	           ipi_ca.ippapertype as ca_papertype,
+	           ipi_ca.ippapernum as ca_papernum,
+	           ipi_ca.ipphone as ca_phone,
+	           ipi_ca.ipemail as ca_email,
+	           ipi_ca.ipadress  as ca_address,
+	           ipi_ca.ipcreatedate as ca_createdate,
+	           ipi_ca.ipmodifydate as ca_modifydate,
+	           ca_paper.papertype as ca_paper,
+	           ci.vehicleownerid,
+	           
+	           ci.carbrandid,
+	           ci.carversionid,
+	           ci.carplatenumber,
+	           ci.framenum,
+	           ci.enginenum,
+	           ci.cartype,
+	           ci.carbusload,
+	           ci.carregisterdate,
+	           ci.carcreatedate,
+	           ci.carmodifydate,
+	           ci.carstatus,
+	           brand.brandname,
+	           vi.versionname,
+	           vi.caroffer
+	      from policy_info pi
+	      inner join insurance_personnel_info ipi_ap
+	        on ipi_ap.ipid = pi.applicant and ipi_ap.ipstatus=1
+	      inner join paper_info ap_paper
+	        on ap_paper.paperid= ipi_ap.ippapertype
+	      inner join insurance_personnel_info ipi_ca
+	        on ipi_ca.ipid = pi.carowner and ipi_ca.ipstatus=1
+	      inner join paper_info ca_paper
+	        on ca_paper.paperid= ipi_ca.ippapertype
+	      inner join car_info ci
+	      on ci.carid = pi.carid and ci.carstatus=1
+	      inner join emp_info ei
+	        on ei.empid = pi.empid and ei.empstatus=1
+	      inner join brand_info brand
+	        on ci.carbrandid = brand.brandid
+	      inner join version_info vi
+	        on ci.carversionid = vi.versionid
+	      inner join policy_status ps
+	        on ps.statusid = pi.policystatusid
+	      inner join province_info pri
+	        on pri.provinceid = ipi_ap.ipprovincenum
+	      inner join city_info cii
+	        on cii.cityid = ipi_ap.ipcity
+		  <where>
+		  	<if test="policyNum!=null and policyNum!=''">
+		  		and trim(pi.policynumber) like concat(concat('%',trim(#{policyNum})),'%')
+		  	</if>
+		  	<if test="carOwnerName != '' and carOwnerName != null">
+		  		and trim(ipi_ca.ipname) like concat(concat('%',trim(#{carOwnerName})),'%')
+		  	</if>
+		  	<if test="brand != '' and brand != null">
+		  		and concat(trim(brandname),trim(versionname)) like concat(concat('%',trim(#{brand})),'%')
+		  	</if>
+		  	<if test="empName != '' and empName != null">
+		  		and ei.empname like concat(concat('%',trim(#{empName})),'%')
+		  	</if>
+		  	<if test="provinceId != '' and provinceId != null and provinceId >0">
+		  		and ipi_ap.ipprovincenum = trim(#{provinceId})
+		  	</if>
+		  	<if test="cityId != '' and cityId != null and cityId>0">
+		  		and ipi_ap.ipcity = trim(#{cityId})
+		  	</if>
+		  	<if test="insuranceAmount != '' and insuranceAmount>0">
+		  		and pi.insuranceamount >= #{insuranceAmount}
+		  	</if>
+		  	<if test="startDate != null">
+		  		and pi.billstartdate &gt;= #{startDate}
+		  	</if>
+		  	<if test="endDate != null">
+		  		and pi.billenddate &lt;= #{endDate}
+		  	</if>
+		  	<if test="policyStatus != null and policyStatus >=0">
+		  		and pi.policystatusid = #{policyStatus}
+		  	</if>
+		  	<if test="highPrice !='' and highPrice != null and highPrice>0">
+		  		and vi.caroffer &lt;= #{highPrice}
+		  	</if>
+		  	<if test="lowPrice !='' and lowPrice != null and lowPrice>0">
+		  		and vi.caroffer &gt;= #{lowPrice}
+		  	</if>
+		  	<if test="empId !='' and empId != null">
+		  		and ei.empid =#{empId}
+		  	</if>
+		  </where>
+		 order by pi.policycreatedate desc,pi.billstartdate desc
+    </select>
+    <resultMap type="CheckInfo" id="auditData">
+    	<id column="resourceid" property="resourceId"/>
+    	<result column="idcard" property="idCard"/>
+    	<result column="driverlicense" property="driverlicense"/>
+    	<result column="drivingpermit" property="drivingPermit"/>
+    	<result column="annualreport" property="annualReport"/>
+    	<result column="vehicleinspection" property="vehicleinSpection"/>
+    	<result column="frame" property="frame"/>
+    	<result column="engine" property="engine"/>
+    	<result column="agreement" property="agreement"/>
+    	<association property="policyInfo" javaType="PolicyInfo">
+    		<id column="policy" property="policyId"/>
+    		<result column="policynum" property="policyNum"/>
+    		<association property="policyHolder" javaType="RelatedPersonnel">
+    			<id column="ipid" property="personnelId"/>
+    			<result column="ippapernum" property="paperNum"/>
+    			<association property="paperInfo" javaType="PaperInfo">
+    				<id column="paperid" property="paperId"/>
+    				<result column="papertype" property="paperType"/>
+    			</association>
+    		</association>
+    		<association property="carInfo" javaType="CarInfo">
+    			<id column="carid" property="carId"/>
+    			<result column="enginenum" property="engineNum"/>
+    			<result column="framenum" property="frameNum"/>
+    		</association>
+    	</association>
+    </resultMap>
+    <select id="queryAuditData" parameterType="PolicyCondition" resultMap="auditData">
+    	select pi.policyid,
+    		   pi.policynumber,
+		       pai.paperid,
+		       pai.papertype,
+		       ipi.ipid,
+		       ipi.ippapernum,
+		       ci.carid,
+		       ci.framenum,
+		       ci.enginenum,
+		       cai.resourceid,
+		       cai.idcard,
+		       cai.driverlicense,
+		       cai.drivingpermit,
+		       cai.annualreport,
+		       cai.vehicleinspection,
+		       cai.frame,
+		       cai.engine,
+		       cai.agreement,
+		       cai.policy
+		  from policy_info pi
+		  join insurance_personnel_info ipi
+		    on pi.applicant = ipi.ipid
+		  join paper_info pai
+		    on pai.paperid = ipi.ippapertype
+		  join car_info ci
+		    on ci.carid = pi.carid
+		  join check_info cai
+		    on pi.policyid = cai.policy
+		  where pi.policyid = #{policyId}
+    </select>
+    
+    <update id="audit" parameterType="PolicyCondition">
+    	update policy_info
+         set policystatusid = #{policyStatus}, policymodifydate = sysdate, billstartdate=sysdate,billenddate=add_months(sysdate,12)
+       where policyid = #{policyId}
+    </update>
+   	<update id="uploadResource" parameterType="CheckInfo">
+   		update check_info
+           set idcard=#{idCard},
+               driverlicense=#{driverlicense},
+               drivingpermit=#{drivingPermit},
+               annualreport=#{annualReport},
+               vehicleinspection=#{vehicleinSpection},
+               frame=#{frame},
+               engine=#{engine},
+               agreement=#{agreement}
+         where policy = #{policyId}
+   	</update>
+   	
+   	<update id="changePolicyStatuSid" parameterType="String">
+   		update policy_info set POLICYSTATUSID=0 where policyNumber=#{policyNumber}
+   	</update>
+   	<update id="changePolicyStatus">
+		update policy_info set POLICYSTATUSID=3 where policyId=#{policyId}
+   	</update>
+   	<insert id="insertCheckInfo">
+   		insert into check_info (resourceid,policy) values(seq_checkinfo_resourceid.nextval,#{policyId})
+   	</insert>
+   	
+   	<select id="getPolicyIdByPolicyNumber" resultType="int">
+   		select policyid from policy_info where policyNumber=#{policyNumber}
+   	</select>
+   	
+   	
+</mapper>

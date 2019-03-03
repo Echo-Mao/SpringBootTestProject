@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IInsuranceDao">
+    <resultMap type="insuranceType" id="insuranceWithTable">
+        <id property="insuranceId" column="INSURANCEID"/>
+        <result property="insuranceName" column="INNAME"/>
+        <result property="example" column="EXAMPLE"/>
+        <result property="notice" column="NOTICE"/>
+        <result property="applicable" column="APPLY"/>
+        <result property="buyPercent" column="BUYPERCENT"/>
+        <result property="programmeId" column="PROGRAMME"/>
+        <result property="createTime" column="INCREATEDATE"/>
+        <result property="modifyTime" column="INMODIFYDATE"/>
+        <result property="viewState" column="INSTATUS"/>
+        <association property="programme" column="PROGRAMME" javaType="programmeInfo"
+            select="com.nbui.policy.dao.IProgrmmeDao.findProgrammeInfoById"></association>
+    </resultMap>
+    
+    <insert id="addInsuranceType" parameterType="insuranceType">
+        INSERT INTO INSURANCE_TYPE(<include refid="allOfInsurance" />)
+        VALUES(SEQ_IT_INSURANCEID.NEXTVAL,#{insuranceName},#{example},#{notice}
+            ,#{applicable},#{buyPercent},#{programmeId},#{createTime},#{modifyTime},0)
+    </insert>
+    
+    <update id="updateInsuranceType" parameterType="insuranceType">
+        UPDATE INSURANCE_TYPE 
+            SET EXAMPLE=#{example},NOTICE=#{notice},APPLY=#{applicable}
+                ,BUYPERCENT=#{buyPercent},PROGRAMME=#{programmeId}
+                ,INMODIFYDATE=#{modifyTime},INSTATUS=#{viewState}
+            WHERE INSURANCEID=#{insuranceId}
+    </update>
+
+    <update id="deleteInsuranceType" parameterType="int">
+        UPDATE INSURANCE_TYPE 
+            SET INMODIFYDATE=SYSDATE,
+                INSTATUS=0
+            WHERE INSURANCEID=#{insuranceId}
+    </update>
+    
+    <select id="findAllInsuranceType" resultMap="insuranceWithTable">
+        SELECT <include refid="allOfInsurance" /> FROM INSURANCE_TYPE
+    </select>
+    
+    <select id="findInsuranceTypeByCondition" parameterType="insuranceTypeCondition" resultMap="insuranceWithTable" >
+        SELECT <include refid="allOfInsurance" /> FROM INSURANCE_TYPE
+        <where>
+            <if test="_parameter!=null">
+                <if test="_parameter.qInsuranceName!=null">
+                    AND INNAME LIKE '%'||#{qInsuranceName}||'%'
+                </if>
+                <if test="_parameter.qStartDate!=null">
+                    AND INCREATEDATE > #{qStartDate}
+                </if>
+                <if test="_parameter.qEndDate!=null">
+                    AND INCREATEDATE <![CDATA[<]]> #{qEndDate}
+                </if>
+                <if test="_parameter.qStatus>=0">
+                    AND INSTATUS = #{qStatus}
+                </if>
+                <if test="_parameter.qProgrammeId>0">
+                    AND PROGRAMME = #{qProgrammeId}
+                </if>
+            </if>
+        </where>
+    </select>
+    
+    <select id="findInsuranceTypeById" parameterType="int" resultMap="insuranceWithTable">
+        SELECT <include refid="allOfInsurance" /> FROM INSURANCE_TYPE
+        WHERE INSURANCEID=#{insuranceId}
+    </select>
+    
+    <sql id="allOfInsurance">
+        INSURANCEID,INNAME,EXAMPLE,NOTICE,APPLY,BUYPERCENT,PROGRAMME
+        ,INCREATEDATE,INMODIFYDATE,INSTATUS
+    </sql>
+    
+</mapper>

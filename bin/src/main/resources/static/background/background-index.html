@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="Shortcut Icon" href="../img/logo2.png" />
+    
+		<title>七武海员工管理系统首页</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		<script type="text/javascript" src="/js/jquery.params.js"></script>
+		<script type="text/javascript" src="/js/pagination.js"></script>
+		<script type="text/javascript" src="/js/index/servers_index.js"></script>
+	</head>
+	
+	<body>
+		<div class="container-fluid">
+			<!--logo+七武海后台管理系统-->
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: 6px;text-align: right;">
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-4" style="margin-top: 10px;padding-left: 0;">		
+						<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海后台管理系统</div>
+					</div>
+				</div>
+			</div>
+			
+			<!--蓝色长条-->
+			<div class="base container-fluid" style="padding-top: 10px;height: 30px;">
+				<nav class="navbar navbar-default" role="navigation" style="background-color:#368FE1;height: 30px;">
+				    <div>
+				        <a href="javascript:void(0);" class="navbar-brand navbar-left" style="font-size: 20px;color: #FFFFFF;">欢迎你, <font v-if='loginEmp!=null'>{{loginEmp.empName}}</font></p>			        
+				        <a href="javascript:void(0);" class="navbar-brand navbar-right" style="font-size: 20px;color: #FFFFFF;padding-right: 30px;" @click="exitMethod()">退出</a>
+				        <span style="position: absolute;top:4px;right: 60px;"><a target="sonIframe" href="personal-center.html" class="btn"  style="font-size: 20px;color: #FFFFFF;">个人中心</a></span>
+				    </div>
+				</nav>
+			</div>
+			
+			<div class="container-fluid" data-options="region:'west',split:false" style="width:300px;height: 400px; background-color: white; position: absolute;left: 16px;top:130px">
+		    	<div id="aa" class="easyui-accordion" data-options="fit:false" style="height: 500px; background-color: white;">   
+				    <div id="policyManager" title="保单管理" data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">   
+				        	<a href="view-policy.html" class="btn" style="font-size: 15px;text-decoration: none;">查看保单</a>
+				        	<hr/>
+				        	<a href="upload-list.html" v-show="loginEmp!=null && loginEmp.roleId==1" class="btn" style="font-size: 15px;text-decoration: none;"><font>资料上传</font></a>
+				    </div>
+				    <div id="empManager" title="员工信息管理" data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">   
+				        	<a v-show="loginEmp!=null && loginEmp.roleId>2" href="view-employee-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看员工信息</a>  
+				   			<font v-if="loginEmp!=null && loginEmp.roleId<=2">抱歉！您的权限不够，<br>
+				   			无法访问员工信息管理模块</font>
+				    </div>   
+				    <div id="customerManager" title="客户信息管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">   
+				        	<a v-show="loginEmp!=null && loginEmp.roleId>4" href="view-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看全国客户信息</a>  
+				        	<hr v-if="loginEmp!=null && loginEmp.roleId>4"/>
+				        	<a v-show="loginEmp!=null && loginEmp.roleId>3" href="view-province-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看全省客户信息</a>
+				        	<hr v-if="loginEmp!=null && loginEmp.roleId>3"/>
+				        	<a v-show="loginEmp!=null && loginEmp.roleId>2" href="view-city-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看全市客户信息</a>
+				        	<hr v-if="loginEmp!=null && loginEmp.roleId>2"/>
+				        	<a v-show="loginEmp!=null && loginEmp.roleId==1" href="view-my-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看我的客户信息</a>
+				    		<font v-if="loginEmp!=null && loginEmp.roleId==2">抱歉！您的权限不够，<br>
+				   			无法访问客户信息管理模块</font>
+				    </div>   
+				    <div id="insuranceManager" title="险种管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">
+				    		<a v-show="loginEmp!=null && loginEmp.roleId==6" href="view-insurance-type.html" class="btn" style="font-size: 15px;text-decoration: none;">查看险种</a>  
+				    		<hr v-if="loginEmp!=null && loginEmp.roleId==6" />
+				    		<a v-show="loginEmp!=null && loginEmp.roleId==6" href="create-insurance-type.html" class="btn" style="font-size: 15px;text-decoration: none;">创建险种</a> 
+				    		<font v-if="loginEmp!=null && loginEmp.roleId!=6">抱歉！您的权限不够，<br>
+				   			无法访问险种管理模块</font>
+				    </div>
+				    <div id="priceManager" title="报价方案管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">
+				    		<a v-show="loginEmp!=null && loginEmp.roleId==6" href="view-quotation-plan.html" class="btn" style="font-size: 15px;text-decoration: none;">查看报价方案 </a>
+				    		<hr v-if="loginEmp!=null && loginEmp.roleId==6" />
+				    		<a v-show="loginEmp!=null && loginEmp.roleId==6" href="create-quotation-plan.html" class="btn" style="font-size: 15px;text-decoration: none;">创建报价方案</a>
+				    		<font v-if="loginEmp!=null && loginEmp.roleId!=6">抱歉！您的权限不够，<br>
+				   			无法访问报价方案管理模块</font>
+				    </div>
+				</div>
+		    </div>  
+		    
+        <!-- 修改了行内框架宽度为页面宽度的80% ---yj -->
+		    <div  data-options="region:'center',border:false" style="width: 80%;height: 600px;padding:5px;background:#eee; padding:0px;position: absolute;left: 315px;top:130px" >
+    
+		    	<div id="tt" class="easyui-tabs" data-options="fit:true" >   
+				    <div title="首页" data-options="iconCls:'icon-reload',closable:true"  style="padding:20px;display:none;">   
+				       
+				       
+				    </div>   
+				</div>  
+		    </div>
+		    
+		</div>
+		
+
+	</body>
+</html>
+
+
+
+
+<!-- 
+<div title="保单管理" data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">   
+				        	<a href="view-policy.html" class="btn" style="font-size: 15px;text-decoration: none;">查看保单</a>
+				        	<hr/>
+				        	<a href="upload-list.html" class="btn" style="font-size: 15px;text-decoration: none;" :style="(loginEmp!=null && loginEmp.role.roleId!=1)?styleHidden:''">资料上传{{ loginEmp.role.roleId}}</a>
+				    </div>
+				    <div title="员工信息管理" data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;">   
+				        	<a href="view-employee-information.html" class="btn" style="font-size: 15px;text-decoration: none;">查看员工信息</a>  
+				    </div>   
+				    <div title="客户信息管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;" :style="(loginEmp!=null && loginEmp.role.roleId==2)?styleHidden:''">   
+				        	<a href="view-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;"  :style="(loginEmp!=null && loginEmp.role.roleId>4)?styleHidden:''">查看全国客户信息</a>  
+				        	<hr/>
+				        	<a href="view-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;"  :style="(loginEmp!=null && loginEmp.role.roleId>3)?styleHidden:''">查看全省客户信息</a>
+				        	<hr/>
+				        	<a href="view-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;"  :style="(loginEmp!=null && loginEmp.role.roleId>2)?styleHidden:''">查看全市客户信息</a>
+				        	<hr/>
+				        	<a href="view-my-customer-information.html" class="btn" style="font-size: 15px;text-decoration: none;"  :style="!(loginEmp!=null && loginEmp.role.roleId==1)?styleHidden:''">查看我的客户信息</a>
+				    </div>   
+				    <div title="险种管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;"  :style="!(loginEmp!=null && loginEmp.role.roleId==6)?styleHidden:''">
+				    		<a href="view-insurance-type.html" class="btn" style="font-size: 15px;text-decoration: none;">查看险种</a>  
+				    		<hr/>
+				    		<a href="create-insurance-type.html" class="btn" style="font-size: 15px;text-decoration: none;">创建险种</a> 
+				    </div>
+				    <div title="报价方案管理"  data-options="selected:true,border:false" style="padding:20px;text-align: center;background-color: white;"  :style="!(loginEmp!=null && loginEmp.role.roleId==6)?styleHidden:''">
+				    		<a href="view-quotation-plan.html" class="btn" style="font-size: 15px;text-decoration: none;">查看报价方案</a>
+				    		<hr/>
+				    		<a href="create-quotation-plan.html" class="btn" style="font-size: 15px;text-decoration: none;">创建报价方案</a>
+				    </div> -->
+
+
+
+
+
+
+
+

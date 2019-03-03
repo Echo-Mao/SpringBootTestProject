@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>人工审核</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script src="/js/jquery.params.js"></script>
+		<script src="/js/vue-resource.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../css/insuranceTypeAndProgramme/insuranceTypeCSS.css" />
+		<link rel="stylesheet" typr="text/css" href="../css/checkinfo.css" />
+		<script type="text/javascript" src="../js/policy/check-info.js"></script>
+	</head>
+	
+	<body>
+		<div class="container-fluid" id="checkPage">
+		    <div align="center"><h1 style="font-size: 20px;font-weight: 800;font-family: '微软雅黑';color: #0066FF;padding: 10px;">人工审核</h1></div>
+		    
+		    <div class="container">
+		    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	<a href="#" class="btn btn-primary disabled" role="button">用户上传的资料</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	证件类型 ：{{dataList.policyInfo.policyHolder.paperInfo.paperType}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	证件号：{{dataList.policyInfo.policyHolder.paperNum}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	发动机编号： {{dataList.policyInfo.carInfo.engineNum}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	车架号：{{dataList.policyInfo.carInfo.frameNum}}
+		    	<hr/>
+		    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    	<a href="#" class="btn btn-primary disabled" role="button">业务员提交资料</a>
+			    	<div class="row" style="padding-bottom: 50px;">
+			    		<div class="col-lg-4 col-md-4 col-sm-4 col-md-offset-2" align="right">		
+							用户证件照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.idCard)">{{dataList.idCard}}</a>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4" align="right">		
+							车辆年检报告PDF：<a href="javascript:void(0)" @click="lookResource(dataList.driverlicense)">{{dataList.driverlicense}}</a>
+						</div>
+					</div>
+					<div class="row" style="padding-bottom: 50px;">
+			    		<div class="col-lg-4 col-md-4 col-sm-4 col-md-offset-2" align="right">		
+							用户驾驶证照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.drivingPermit)">{{dataList.drivingPermit}}</a>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4" align="right">		
+							车架号照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.annualReport)">{{dataList.annualReport}}</a>
+						</div>
+					</div >
+					<div class="row" style="padding-bottom: 50px;">
+			    		<div class="col-lg-4 col-md-4 col-sm-4 col-md-offset-2" align="right">		
+							用户行驶证照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.vehicleinSpection)">{{dataList.vehicleinSpection}}</a>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4" align="right">		
+							发动机编号照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.frame)">{{dataList.frame}}</a>
+						</div>
+					</div>s
+					<div class="row" style="padding-bottom: 50px;">
+			    		<div class="col-lg-4 col-md-4 col-sm-4 col-md-offset-2" align="right">车辆年审报告照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.engine)">{{dataList.engine}}</a>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4" align="right">		
+							协议书照片PDF：<a href="javascript:void(0)" @click="lookResource(dataList.agreement)">{{dataList.agreement}}</a>
+						</div>
+					</div>
+				</div>
+
+			<div align="center">
+				<button type="button" @click="audit(4)" class="btn btn-warning">不通过</button>&nbsp;&nbsp;&nbsp;
+				<button type="button" @click="audit(5)" class="btn btn-primary">&nbsp;通&nbsp;过&nbsp;</button>
+			</div>
+		</div>
+	</body>
+</html>

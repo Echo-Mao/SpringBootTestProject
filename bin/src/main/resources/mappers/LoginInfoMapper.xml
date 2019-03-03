@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nbui.user.dao.ILoginDao">
+	<resultMap id="LoginResultMap" type="com.nbui.entity.LoginInfo">
+		<id column="LOGINID" property="loginId" jdbcType="INTEGER" />
+		<result column="LOGINNAME" property="loginName"
+			jdbcType="VARCHAR" />
+		<result column="LOGINPASSWORD" property="loginPwd"
+			jdbcType="VARCHAR" />
+		<result column="LOGINPHONE" property="phoneNum"
+			jdbcType="VARCHAR" />
+		<result column="LOGINSTATE" property="loginStatus"
+			jdbcType="VARCHAR" />
+		<result column="LOGINDATE" property="loginTime"
+		    jdbcType="DATE" />
+		<result column="LOGINCREATEDATE" property="createTime"
+			jdbcType="DATE" />
+		<result column="LOGINMODIFYDATE" property="modifyTime"
+			jdbcType="DATE" />
+		<result column="LOGINSTATUS" property="viewState"
+			jdbcType="INTEGER" />
+	</resultMap>
+	
+	<!-- 用户名密码登录 -->
+	<select id="findInfoByNameAndPwd" resultMap="LoginResultMap"
+		parameterType="loginInfo">
+		select <include refid="allOfLoginInfo" /> from login_info where
+		LOGINNAME=#{loginName} and
+		LOGINPASSWORD=#{loginPwd} 
+	</select>
+	
+	<!-- 手机号登录 -->
+	<select id="findInfoByPhoneNum" resultMap="LoginResultMap"
+		parameterType="String">
+		select <include refid="allOfLoginInfo" /> from login_info where
+		LOGINPHONE=#{phoneNum} 
+	</select>
+	
+	<!-- 修改登录密码 -->
+	<update id="updateLoginInfo" parameterType="loginInfo">
+		update login_info
+		<set>
+			<if test="loginName != null">
+				LOGINNAME = #{loginName,jdbcType=VARCHAR},
+			</if>
+			<if test="loginPwd != null">
+				LOGINPASSWORD = #{loginPwd,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneNum != null">
+				LOGINPHONE = #{phoneNum,jdbcType=VARCHAR},
+			</if>		
+				LOGINMODIFYDATE = sysdate,
+				LOGINSTATE='离线'	,
+					
+		</set>
+		where LOGINID=#{loginId}
+	</update>
+	
+	<!-- 修改登陆状态 -->
+	<update id="updateLoginState" >
+	update login_info set LOGINSTATE=#{state} where LOGINID=#{loginId}
+	</update>
+
+    <!-- 用户注册 -->
+    <insert id="addLoginInfo" parameterType="loginInfo">
+        <selectKey keyProperty="loginId" resultType="int" order="AFTER">
+    		select seq_login_loginid.currval from dual
+    	</selectKey>
+        
+        insert into login_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            LOGINID,
+            <if test="loginName != null">
+                LOGINNAME,
+            </if>
+            <if test="loginPwd != null">
+                LOGINPASSWORD,
+            </if>
+            <if test="phoneNum != null">
+                LOGINPHONE,
+            </if>
+           
+                LOGINSTATE,
+            
+            LOGINDATE,
+            <if test="createTime != null">
+                LOGINCREATEDATE,
+            </if>
+            <if test="modifyTime != null">
+                LOGINMODIFYDATE,
+            </if>
+            <if test="viewState != null">
+                LOGINSTATUS,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            seq_login_loginid.nextval,
+            <if test="loginName != null">
+                #{loginName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPwd != null">
+                #{loginPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="phoneNum != null">
+                #{phoneNum,jdbcType=VARCHAR},
+            </if>           
+               '离线',          
+            sysdate,
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=DATE},
+            </if>
+            <if test="viewState != null">
+                #{viewState,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findLoginInfoByloginId" resultMap="LoginResultMap">
+        select <include refid="allOfLoginInfo" /> from login_info where=#{loginId}
+    </select>
+
+    <sql id="allOfLoginInfo">LOGINID,
+        LOGINNAME,LOGINPASSWORD,LOGINPHONE,LOGINSTATE,LOGINDATE,LOGINCREATEDATE,
+        LOGINMODIFYDATE,LOGINSTATUS</sql>
+
+</mapper>

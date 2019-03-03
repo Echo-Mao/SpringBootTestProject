@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.ICarInfoDao">
+    <resultMap type="brandInfo" id="brandInfoWithTable">
+        <id property="brandId" column="BRANDID"/>
+        <result property="brandname" column="BRANDNAME"/>
+        <collection property="carInfos" column="BRANDID" ofType="carInfo"
+            select="com.nbui.policy.dao.IVersionInfoDao.queryVersionInfoByBrandId"></collection>
+    </resultMap>
+    
+    <select id="queryBrandById" parameterType="int" resultMap="brandInfoWithTable">
+        SELECT BRANDID,BRANDNAME FROM BRAND_INFO WHERE BRANDID=#{brandId}
+    </select>
+    
+</mapper>

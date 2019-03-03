@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.provinceCity.dao.IProvinceDao">
+    <resultMap type="province" id="provinceWithTable">
+        <id property="pid" column="PID"/>
+        <result property="provinceId" column="PROVINCEID"/>
+        <result property="province" column="PROVINCE"/>
+        <collection property="citys" column="PROVINCEID" ofType="city"
+            select="com.nbui.provinceCity.dao.ICityDao.findCityByProvinceId"></collection>
+    </resultMap>
+    
+    <!-- 查全 -->
+    <select id="queryAllProvince" resultMap="provinceWithTable">
+        SELECT PID,PROVINCEID,PROVINCE FROM PROVINCE_INFO
+    </select>
+    
+    <!-- 经id查 -->
+    <select id="queryProvinceById" parameterType="java.lang.String" resultMap="provinceWithTable">
+        SELECT PID,PROVINCEID,PROVINCE FROM PROVINCE_INFO WHERE PROVINCEID=#{provinceId}
+    </select>
+        
+</mapper>

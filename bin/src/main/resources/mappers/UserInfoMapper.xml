@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.user.dao.IUserDao">
+    <resultMap type="userInfo" id="userInfoWithTable">
+        <id property="userId" column="USERID"/>
+        <result property="loginId" column="USERLOGINID"/>
+        <result property="userName" column="USERNAME"/>
+        <result property="gender" column="USERGENDER"/>
+        <result property="birthday" column="USERBIRTHDAY"/>
+        <result property="paperTypeId" column="USERPAPERTYPE"/>
+        <result property="paperNum" column="USERPAPERNUM"/>
+        <result property="provinceId" column="USERPROVINCE"/>
+        <result property="cityId" column="USERCITY"/>
+        <result property="address" column="USERADDRESS"/>
+        <result property="createTime" column="USERCREATEDATE"/>
+        <result property="modifyTime" column="USERMODIFYDATE"/>
+        <result property="viewState" column="USERSTATUS"/>
+        <association property="loginInfo" column="USERLOGINID" javaType="loginInfo"
+            select="com.nbui.user.dao.ILoginDao.findLoginInfoByloginId"></association>
+        <association property="city" column="USERCITY" javaType="city"
+            select="com.nbui.supers.ICityDao.findCityById"></association>
+    </resultMap>
+    
+    <!-- 按id查 -->
+    <select id="findUserInfoById" parameterType="int" resultMap="userInfoWithTable">
+        SELECT <include refid="allOfUser" /> FROM USER_INFO WHERE USERID={userId}
+    </select>
+    <sql id="allOfUser">
+        USERID,USERLOGINID,USERNAME,USERGENDER,USERBIRTHDAY
+        ,USERPAPERTYPE,USERPAPERNUM,USERPROVINCE,USERCITY
+        ,USERADDRESS,USERCREATEDATE,USERMODIFYDATE,USERSTATUS
+    </sql>
+    <update id="updateUserInfo" parameterType="com.nbui.entity.UserInfo">
+    	update user_info set username=#{userName},USERPAPERTYPE=#{paperTypeId},
+    	USERPAPERNUM=#{paperNum},USERGENDER=#{gender},USERPROVINCE=#{provinceId},
+    	USERCITY=#{cityId},USERADDRESS=#{address} where userloginId=#{loginId}
+    </update>
+    <select id="getUserId" parameterType="Integer" resultType="com.nbui.entity.UserInfo">
+    select userId from User_Info
+	where userloginId=#{loginId}
+    </select>
+    <select id="findUserInfoBrief" resultType="com.nbui.policy.entity.UserInfoBrief" parameterType="Integer">
+ 	select ui.USERID userId,ui.USERNAME userName,ui.USERGENDER gender,ui.USERPAPERTYPE paperTypeId,
+	paper.paperType paperType,ui.userpapernum paperNum,ui.userprovince provinceId,pri.province province,
+	ui.usercity cityId, ci.city city,ui.USERADDRESS address
+	from USER_INFO ui inner join PROVINCE_INFO pri on ui.USERPROVINCE=pri.PROVINCEID
+	inner join CITY_INFO ci on ci.CITYID=ui.USERCITY 
+	inner join PAPER_INFO paper on paper.PAPERID=ui.USERPAPERTYPE
+	where ui.userloginId=#{loginId}
+    </select>
+    
+    
+    <insert id="addUserInfo" parameterType="INTEGER" >
+    insert into USER_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+                USERID,          
+                USERLOGINID,         
+                USERCREATEDATE,          
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                seq_user_userid.nextval,
+                #{loginId},
+                sysdate,        
+        </trim>
+    </insert>
+</mapper>

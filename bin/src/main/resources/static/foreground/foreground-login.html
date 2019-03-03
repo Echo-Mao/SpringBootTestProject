@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>七武海车险投保系统登录页面</title>
+<link href="../css/bootstrap.css" rel="stylesheet">
+<script src="../js/jquery-1.11.3.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css"
+	href="../themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../js/vue-resource.js"></script>
+<style type="text/css">
+#bigDiv {
+	width: 1570px;
+	height: 780px;
+}
+
+#divTop {
+	position: absolute;
+}
+
+#logoDIv {
+	position: absolute;
+	left: 108px;
+	top: -3px;
+	height: 59px;
+}
+
+#qwhDiv {
+	width: 200px;
+	position: absolute;
+	left: 189px;
+	top: 22px;
+	height: 32px;
+}
+
+#bodyDiv {
+	position: absolute;
+	width: 1670px;
+	height: 630px;
+	background-image: url(../img/u906.jpg);
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	left: -85px;
+	top: 92px;
+}
+
+#footDiv {
+	background-color: #5E5E5E;
+	position: absolute;
+	width: 1586px;
+	height: 61px;
+	left: -1px;
+	top: 721px;
+}
+
+#footContent {
+	position: absolute;
+	width: 746px;
+	height: 20px;
+	left: 446px;
+	top: 19px;
+}
+
+#loginDiv {
+	background-color: white;
+	position: absolute;
+	width: 340px;
+	height: 446px;
+	left: 1285px;
+	top: 59px;
+}
+
+.nav-tabs>li {
+	float: left;
+	margin-bottom: -1px;
+	width: 50%;
+	text-align: center;
+}
+
+#loginDiv_ {
+	
+}
+
+#sjDiv {
+	position: absolute;
+	width: 30px;
+	height: 40px;
+	left: 28px;
+	top: 86px;
+}
+
+#dxDiv {
+	position: absolute;
+	width: 30px;
+	height: 40px;
+	left: 24px;
+	top: 152px;
+}
+
+#sjsrDiv {
+	position: absolute;
+	width: 253px;
+	height: 40px;
+	left: 53px;
+	top: 83px;
+}
+
+#dxsrDiv {
+	position: absolute;
+	width: 170px;
+	height: 31px;
+	left: 52px;
+	top: 152px;
+}
+
+#remDiv {
+	position: absolute;
+	left: 69px;
+	top: 210px;
+}
+
+#dlDiv {
+	position: absolute;
+	width: 231px;
+	left: 67px;
+	top: 257px;
+}
+
+#fsDiv {
+	position: absolute;
+	left: 154px;
+	top: 7px;
+	width: 99px;
+}
+
+#foottext {
+	position: absolute;
+	left: 12px;
+	top: 331px;
+	height: 114px;
+	width: 318px;
+}
+/**
+			 * 账号登录
+			 */
+#zhimgDiv {
+	position: absolute;
+	width: 30px;
+	height: 40px;
+	left: 28px;
+	top: 86px;
+}
+
+#mmimgDiv {
+	position: absolute;
+	width: 30px;
+	height: 40px;
+	left: 24px;
+	top: 152px;
+}
+
+#zhDiv {
+	position: absolute;
+	width: 256px;
+	height: 40px;
+	left: 47px;
+	top: 84px;
+}
+
+#mmDiv {
+	position: absolute;
+	width: 257px;
+	height: 31px;
+	left: 48px;
+	top: 150px;
+}
+
+#remyhmDiv {
+	position: absolute;
+	left: 66px;
+	top: 210px;
+}
+
+#zhdlDiv {
+	position: absolute;
+	width: 223px;
+	left: 66px;
+	top: 259px;
+}
+
+#wjzh {
+	position: absolute;
+	width: 79px;
+	left: 65px;
+	top: 293px;
+}
+
+#wjmm {
+	position: absolute;
+	width: 78px;
+	left: 221px;
+	top: 294px;
+}
+</style>
+
+
+<script type="text/javascript">
+	var rightPhone = "";
+	var wait=60;
+	function getTime(va){
+		if(wait==0){
+			va.removeAttribute("disabled");  
+			va.value="获取验证码";
+			document.getElementById("yzm").value="";
+			alert("验证码已失效，请重新获取验证码");
+			wait=60;
+			return;
+		}else{
+			 va.setAttribute("disabled", true);
+			 va.value="重新发送(" + wait + ")";
+			 wait--;
+			 setTimeout(function() { getTime(va)},1000);
+		}
+	}
+	function getCode(va) {
+		getTime(va);
+		var phone = document.getElementById("phoneNum").value;
+		rightPhone = phone;
+		var regexp = /^1[34578]\d{9}$/;
+		if (!regexp.test(phone)) {
+			alert("请正确填写手机号");
+			return;
+		}
+		var code = "";
+		for (var i = 0; i < 6; i++) {
+			code += Math.floor(Math.random() * 10);
+		}
+		document.getElementById("yzm").value = code;
+		 $.ajax({
+					url : "http://v.juhe.cn/sms/send?key=e980263af3a4bc71f2c6bc5268443b39&mobile="
+							+ phone
+							+ "&tpl_id=127791&tpl_value="
+							+ "%23code%23%3d" + code,
+					dataType : "jsonp",
+					contentType : "application/json;charset=utf-8",
+					dtype : "get",
+					success : function(rs) {
+						for ( var i in rs) {
+							console.log(i);
+							console.log("\t" + rs[i]);
+						}
+						alert(rs.reason);
+
+					}
+				});   
+	}
+
+	function loginByPhone() {
+		var yzm = document.getElementById("yzm").value;
+		var pwd = document.getElementById("loginPwd").value;
+		var phone = document.getElementById("phoneNum").value;
+		var regexp = /^\w$/;
+		if (pwd != "") {
+			if (yzm == pwd) {
+				if (phone != rightPhone) {
+					alert("电话号码已更改，请重新获取验证码");
+					return;
+				} else {
+					//window.location = "/loginByPhone.action?phone=" + phone+ "&pwd=" + yzm;
+					$.ajax({
+						url : "/loginByPhone.action",
+						data : "phone=" + phone + "&pwd=" + yzm,
+						//dataType : "json",
+						//contentType : "application/json;charset=utf-8",
+						type : "post"
+						
+					});
+				}
+			} else {
+				alert("请输入正确验证码");
+				return;
+			}
+		} else {
+			alert("请输入验证码");
+			return;
+		}
+
+	}
+
+	function loginByName() {
+		var name = $("#name").val();
+		var pass = $("#password").val();
+		if ($.trim(name) == "") {
+			alert("用户名不能为空！");
+			return;
+		}
+		if ($.trim(pass) == "") {
+			alert("密码不能为空！");
+			return;
+		}
+		$.ajax({
+			url : "/loginByName.action",
+			data : "loginName=" + name + "&loginPwd=" + pass,
+			dataType : "json",
+			//contentType : "application/json;charset=utf-8",
+			type : "post",
+			success : function(rs) {
+				$("#errorMsg").text("");
+				if (rs.msg == "success") {
+					window.location = "/foreground/foreground-index.html";
+					return;
+				} else if (rs.msg == "having") {
+					var messa = confirm("账号已在其他地方登陆,是否退出并重新登陆？");
+					if (messa == true) {
+						window.location = "/outLogin.action?loginName=" + name
+								+ "&loginPwd=" + pass;
+						return;
+					} else {
+						return;
+					}
+				} else {
+					$("#errormsg").text("用户名或密码错误");
+					return;
+				}
+			}
+		});
+	}
+	
+	
+	
+</script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		if (location.href.indexOf("#reloaded") == -1) {
+			location.href = location.href + "#reloaded";
+			location.reload();
+		}
+	})
+</script>
+
+</head>
+
+<body>
+	<div id="bigDiv">
+		<div style="position: absolute; top: 30px; left: 90px; width: 1250px;">
+			<div class="row">
+				<div class="col-lg-1 col-md-1 col-sm-1"
+					style="margin-top: -10px; text-align: right;">
+					<img src="../img/logo.png" height="50px" />&nbsp;
+				</div>
+				<div class="col-lg-2 col-md-2 col-sm-2"
+					style="margin-top: -6px; padding-left: 0;">
+					<div class="text-primary"
+						style="font-size: 30px; font-weight: 800; font-family: '微软雅黑';">七武海车险</div>
+				</div>
+			</div>
+		</div>
+		<div id="bodyDiv">
+			<div id="loginDiv">
+				<ul id="myTab" class="nav nav-tabs">
+					<li class="active"><a href="#zh" data-toggle="tab" class="zh">账号登录</a>
+					</li>
+					<li><a href="#sjh" data-toggle="tab" class="sjh"> 手机号登录</a></li>
+
+				</ul>
+				<div id="myTabContent" class="tab-content">
+					<!--
+                    	手机号登录
+                    -->
+					<div class="tab-pane fade" id="sjh" style="display: none;">
+
+						<form>
+							<div id="sjDiv">
+								<img src="../img/手机.PNG" />
+							</div>
+							<div class="form-group col-sm-8 " id="sjsrDiv">
+								<input type="text" class="form-control col-sm-4"
+									placeholder="请输入手机号码" id="phoneNum" v-model="saveName"
+									maxlength="11">
+							</div>
+							<div id="dxDiv">
+								<img src="../img/短信.PNG" />
+							</div>
+							<div class="form-group col-sm-8 " id="dxsrDiv">
+								<input type="hidden" id="yzm"> <input type="text"
+									id="loginPwd" class="form-control col-sm-3" placeholder="短信动态码"
+									style="width: 130px;" maxlength="6">
+								<div id="fsDiv">
+									<font size="1px"> <input type="button" value="获取验证码"
+										onclick="getCode(this)" id="hq">
+									</font>
+								</div>
+							</div>
+
+							<div id="dlDiv">
+								<button type="button" class="btn btn-success col-sm-12"
+									onclick="loginByPhone()">登录</button>
+							</div>
+						</form>
+						<div id="foottext">
+							<p>
+								<b>&nbsp;&nbsp;&nbsp;&nbsp;注意:</b><br /> <font
+									style="color: gray;">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;未注册时，使用手机验证码登录系统会进<br />&nbsp;&nbsp;&nbsp;&nbsp;行默认注册，初始登录名为当前手机号，密码<br />&nbsp;&nbsp;&nbsp;&nbsp;为123456，请及时更改密码
+								</font>
+						</div>
+					</div>
+				</div>
+				<!--
+                    	账号登录
+                    -->
+				<div class="tab-pane fade in active" id="zh">
+					<form>
+						<div id="zhimgDiv">
+							<img src="../img/账号.PNG" />
+						</div>
+						<div class="form-group col-sm-8 " id="zhDiv">
+							<input type="text" class="form-control col-sm-4" id="name"
+								placeholder="请输入账号" v-model="saveName" maxlength="11">
+						</div>
+						<div id="mmimgDiv">
+							<img src="../img/密码.PNG" />
+						</div>
+						<div class="form-group col-sm-8 " id="mmDiv">
+							<input type="password" class="form-control col-sm-4"
+								id="password" placeholder="请输入密码" onpaste="return false"
+								oncontextmenu="return false" oncopy="return false"
+								oncut="return false" maxlength="6"> <font id="errormsg"
+								color="red"></font>
+						</div>
+						<div id="remyhmDiv"></div>
+						<div id="zhdlDiv">
+							<button type="button" class="btn btn-success col-sm-12"
+								onclick="loginByName()" id="loginkey">登录</button>
+						</div>
+						<div id="wjzh">
+							<br /> <a href="/foreground/foreground-register.html">注册新账号</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="footDiv">
+		<div id="footContent">版权所有 © 中国七武海车险（集团）股份有限公司
+			未经许可不得复制、转载或摘编，违者必究！</div>
+	</div>
+
+	<script type="text/javascript">
+		var protocol = window.location.protocol;
+		var host = window.location.hostname;
+		var port = window.location.port;
+
+		$(function() {
+			$('.sjh').click(function() {
+				$(".sjh").css({
+					"backgroundColor" : "#008000",
+					"color" : "white"
+				});
+				$(".zh").css({
+					"backgroundColor" : "white",
+					"color" : "black"
+				});
+				$("#sjh").css("display", "block");
+				$("#zh").css("display", "none");
+			});
+			$('.zh').click(function() {
+				$(".zh").css({
+					"backgroundColor" : "#008000",
+					"color" : "white"
+				});
+				$(".sjh").css({
+					"backgroundColor" : "white",
+					"color" : "black"
+				});
+				$("#zh").css("display", "block");
+				$("#sjh").css("display", "none");
+			});
+		})
+	</script>
+	<script type="text/javascript">
+		var loginVue = new Vue({
+			el : "#bigDiv",
+			data : {
+				saveName : ""
+			},
+			created : function() {
+				//1先去后台获取保存的用户名
+				this.getLoginName();
+			},
+			methods : {
+				getLoginName : function() {
+					this.$http.post("/getLoginName.action").then(function(res) {
+						this.saveName = res.data.loginName;
+
+					}, function(res) {
+						this.loginName = "";
+					});
+				}
+			}
+
+		})
+	</script>
+</body>
+
+</html>

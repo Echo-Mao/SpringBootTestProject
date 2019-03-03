@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IVersionInfoDao">
+    <resultMap type="versionInfo" id="versionInfoWithTable">
+        <id property="versionId" column="VERSIONID"/>
+        <result property="versionName" column="VERSIONNAME"/>
+        <result property="brandId" column="BRAND"/>
+        <result property="carOffer" column="CAROFFER"/>
+    </resultMap>
+    <select id="queryVersionInfoByBrandId" parameterType="int" resultMap="versionInfoWithTable">
+        SELECT <include refid="allOfVersion" /> FROM VERSION_INFO WHERE BRAND=#{brandId}
+    </select>
+    
+    <sql id="allOfVersion">VERSIONID,VERSIONNAME,BRAND,CAROFFER</sql>
+</mapper>

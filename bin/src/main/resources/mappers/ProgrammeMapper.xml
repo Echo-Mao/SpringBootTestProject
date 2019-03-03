@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IProgrmmeDao">
+    <resultMap type="programmeInfo" id="programmeInfoWithTable">
+        <id property="programmeId" column="PROGRAMMEID"/>
+        <result property="percent" column="PERCENT"/>
+        <result property="basicsMoney" column="BASICSMONEY"/>
+        <result property="createTime" column="CREATEDATE"/>
+        <result property="modifyTime" column="MODIFYDATE"/>
+    </resultMap>
+    
+    <select id="findAllProgrammeInfo" resultMap="programmeInfoWithTable">
+        SELECT <include refid="allOfProgramme" /> FROM PROGRAMME_INFO
+    </select>
+    
+    <select id="findProgrammeInfoByCondition" parameterType="programmeCondition" resultMap="programmeInfoWithTable">
+        SELECT <include refid="allOfProgramme" /> FROM PROGRAMME_INFO
+        <where>
+            <if test="_parameter!=null">
+                <if test="_parameter.qProgrammeId>0">
+                    AND PROGRAMMEID = #{qProgrammeId}
+                </if>
+                <if test="_parameter.qPercent>0">
+                    AND PERCENT > #{qPercent}
+                </if>
+                <if test="_parameter.qBasicsMoney>0">
+                    AND BASICSMONEY > #{qBasicsMoney}
+                </if>
+            </if>
+        </where>
+    </select>
+    
+    <select id="findProgrammeInfoById" parameterType="int" resultMap="programmeInfoWithTable">
+        SELECT <include refid="allOfProgramme" /> FROM PROGRAMME_INFO
+        WHERE PROGRAMMEID=#{id}
+    </select>
+    
+    <insert id="addProgrammeInfo" parameterType="programmeInfo">
+        INSERT INTO PROGRAMME_INFO(<include refid="allOfProgramme" />)
+        VALUES(SEQ_PROGRAMME_PROGRAMMEID.NEXTVAL,#{percent},#{basicsMoney},#{createTime},#{modifyTime})
+    </insert>
+
+    <update id="updateProgrammeInfo" parameterType="programmeInfo">
+        UPDATE PROGRAMME_INFO
+        SET PERCENT=#{percent},BASICSMONEY=#{basicsMoney},MODIFYDATE=#{modifyTime}
+        WHERE PROGRAMMEID=#{programmeId}
+    </update>
+    
+    <sql id="allOfProgramme">
+        PROGRAMMEID,PERCENT,BASICSMONEY,CREATEDATE,MODIFYDATE
+    </sql>
+    
+</mapper>

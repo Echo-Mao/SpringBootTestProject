@@ -1,0 +1,184 @@
+*{
+	margin: 0;
+	padding: 0;
+	vertical-align: middle;
+}
+body{
+	width: 80%;
+	margin: auto;
+}
+#base{
+	width: 100%;
+}
+a{
+	text-decoration: none;
+	color: black;
+}
+
+.topage{
+	float: right;
+	padding-right: 20px;
+	padding-left: 10px;
+}
+
+
+.top_title{
+
+	padding-top: 50px;
+	padding-left: 20px;
+	margin-bottom: 10px;
+}
+/* .top_title .htitle b{
+	color: red;
+	font-size: 40px;
+	margin-right: 20px;
+} */
+.top_title span{
+	font-size: 20px;
+	margin: 5px;
+}
+/* .top_title span b{
+	color: red;
+	font-size: 25px;
+	margin: 10px;
+} */
+
+
+
+
+.middle_nav{
+	width: 1200px;
+	height: 50px;
+	font-size: 20px;
+	background-color: #E6E6E6;
+	border-bottom: solid red 2px;
+	vertical-align: middle;
+}
+.middle_nav div{
+	width: 150px;
+	line-height: 48px;
+	padding-left: 30px;
+	float: left;
+}
+.middle_nav .button1{
+	color: white;
+	background-color: red;
+}
+.middle_nav .button2{
+	background-color: #CCCCCC;
+}
+
+.body{
+	width: 1000px;
+	margin-top: 10px;
+}
+.body div{
+	float: left;
+}
+.body .nav_left{
+	width: 150px;
+	border: solid gray 1px;
+	margin-right: 10px;
+}
+.body .nav_left div{
+	width: 100%;
+	height: 45px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 45px;
+}
+.body .nav_left .nav1{
+	border-bottom: dashed gray 1px;
+	background-color: #B8EECF;
+	font-size: 19px;
+}
+.body .nav_left .nav2{
+	background-color: #E0ECFF;
+	font-size: 18px;
+}
+
+
+.body .content{
+	width: 780px;
+	border: solid gray 1px;
+}
+.body .content div{
+	width: 100%;
+	padding: 5px 10px;
+}
+.content .content1 .content1_top{
+	width: 750px;
+	border-bottom: dashed gray 1px;
+}
+.content .content1 .content1_top div{
+	width: 45%;
+	float: left;
+}
+.content .content1 .content1_top .rightFloat{
+	float: right;
+}
+.content .content1 .content1_top .rightFloat input{
+	width:190px;
+	margin-left:80px;
+}
+
+
+
+.content .content1 .content1_body{
+	width: 750px;
+	padding: 10px;
+}
+.content .content1 .content1_body span{
+	margin-right: 10px;
+}
+
+.tocenter{
+	margin-top: 30px;
+}
+
+.table div img{
+	float: left;
+}
+
+
+.content .content2 .content2_top{
+	width: 750px;
+	border-bottom: dashed gray 1px;
+}
+.content .content2 .content2_top div{
+	width: 45%;
+	float: left;
+}
+.content .content2 .content2_top .rightFloat{
+	float: right;
+}
+.content .content2 .content2_top .rightFloat input{
+	width:190px;
+	margin-left:80px;
+}
+
+
+
+.content .content2 .content2_body{
+	width: 750px;
+	padding: 10px;
+}
+.content .content2 .content2_body span{
+	margin-right: 10px;
+}
+
+
+.content .content1{
+	display: block;
+}
+.content .content2{
+	display: none;
+}
+
+
+
+
+
+
+
+

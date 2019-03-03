@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+    <meta http-equiv="expires" content="0">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="Author" content="EchoMao" />
+    <meta name="Copyright" content="copyright 2219 nanabuumi" />
+    <meta name="keywords" content="insurance" />
+    <meta name="description" content="dio" />
+
+    <title>修改险种信息</title>
+
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <script src="../js/jquery-1.11.3.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../themes/icon.css">
+    <script src="../js/jquery.easyui.min.js"></script>
+
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/vue-resource.js"></script>
+    <script src="/js/jquery.params.js"></script>
+    <script src="../js/insuranceTypeAndProgramme/insuranceTypeJS.js"></script>
+    <!-- <script src="../js/insuranceTypeAndProgramme/insuranceType-details.js"></script> -->
+  </head>
+
+  <body>
+    <div class="page container-fluid">
+      <div align="center">
+        <h1 style="font-size: 20px;font-weight: 800;font-family: '微软雅黑';color: #0066FF; padding: 16px;">修改险种信息</h1>
+      </div>
+
+      <div align="center">
+        <div class="table-responsive" style="padding-top: 10px;width: 700px;">
+          <table class="table table-striped table-bordered" style="text-align: center;">
+            <tr class="hidden">
+              <td><input type="text" v-model="detailInsurance.insuranceId" /></td>
+            </tr>
+            <tr>
+              <td width="30%">险种名称</td>
+              <td>
+                <!-- <input type="text" :value="detailInsurance.insuranceName" size="40" readonly="readonly" /> -->
+                {{ detailInsurance.insuranceName }}
+              </td>
+            </tr>
+            <tr>
+              <td width="30%">上线状态</td>
+              <td>
+                <select v-model="detailInsurance.viewState">
+                  <option value="1" selected="selected">已上线</option>
+                  <option value="0">已下线/未上线</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td width="30%">报价方案id</td>
+              <td>
+                <select v-model="detailInsurance.programmeId" style="width: 150px;height: 25px;">
+                  <option v-for="p in programmeList" :value="p.programmeId">{{ p.programmeId }}</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td width="30%">购买指数</td>
+              <td><input type="text" v-model="detailInsurance.buyPercent" size="40" /></td>
+            </tr>
+            <tr>
+              <td width="30%">适用人群</td>
+              <td><input type="text" :value="detailInsurance.applicable" size="40" /></td>
+            </tr>
+            <tr>
+              <td width="30%">赔款须知</td>
+              <td>
+                <textarea rows="2" cols="80" style="resize: none;" v-model="detailInsurance.notice"></textarea>
+              </td>
+            </tr>
+            <tr>
+              <td width="30%">案例</td>
+              <td>
+                <textarea rows="4" cols="80" style="resize: none;" v-model="detailInsurance.example"></textarea>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div align="center">
+        <button type="button" class="btn btn-primary" @click="updateInsuranceType(detailInsurance)">提交修改</button>
+      </div>
+    </div>
+  </body>
+</html>

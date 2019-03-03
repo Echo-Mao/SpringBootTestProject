@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IRelatedPersonnelDao">
+    <resultMap type="relatedPersonnel" id="relatedPersonnelWithTable">
+        <id property="personnelId" column="IPID"/>
+        <result property="personnelName" column="IPNAME"/>
+        <result property="paperTypeId" column="IPPAPERTYPE"/>
+        <result property="paperNum" column="IPPAPERNUM"/>
+        <result property="phoneNum" column="IPPHONE"/>
+        <result property="email" column="IPEMAIL"/>
+        <result property="address" column="IPADDRESS"/>
+        <result property="createTime" column="IPCREATEDATE"/>
+        <result property="modifyTime" column="IPMODIFYDATE"/>
+        <result property="viewState" column="IPSTATUS"/>
+    </resultMap>
+    <!-- 查找相关人员信息 -->
+    <select id="findRelatedPersonnelInfoById" parameterType="int" resultMap="relatedPersonnelWithTable">
+        SELECT <include refid="allOfPersonnel" /> FROM insurance_personnel_info WHERE=#{id}
+    </select>
+    
+    <sql id="allOfPersonnel">IPID,IPNAME,IPPAPERTYPE,IPPAPERNUM,IPPHONE,IPEMAIL,IPADDRESS,IPCREATEDATE,IPMODIFYDATE,IPSTATUS</sql>
+</mapper>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>查看保单</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js">
+		</script><script src="/js/jquery.params.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../css/insuranceTypeAndProgramme/insuranceTypeCSS.css" />
+		<script src="/js/vue-resource.js"></script>
+	    <script src="../js/policy/policys-info.js"></script>
+	    <script src="../js/pagination.js"></script>
+	</head>
+	
+	<body>
+		<div id="policyPage" class="container-fluid">
+			<div align="center"><h1 style="font-size: 20px;font-weight: 800;font-family: '微软雅黑';color: #0066FF;">保单信息</h1></div>
+		    
+		    <div >
+		    	<div class="row">
+		    		<div class="col-lg-2 col-md-2 col-sm-2">		
+						保单号 <input type="text" v-model="condition.policyNum" placeholder="请输入保单号" size="12"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2">		
+						投保人&nbsp;&nbsp;<input type="text" v-model="condition.carOwnerName" placeholder="请输入姓名" size="12"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2">		
+						车辆品牌 <input type="text" v-model="condition.brand" placeholder="请输入车辆品牌" size="11"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2">
+						业务员 <input v-if="demand.role===1" type="text" readonly="readonly" v-model="condition.empName" placeholder="请输入业务员" size="12"/>
+						<input v-else type="text" v-model="condition.empName" placeholder="请输入业务员" size="12"/>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-3" >		
+						地区
+						<input v-if="demand.role===3" type="text" readonly="readonly" size="10" v-model="condition.provinceId"/>
+						<input v-else-if="demand.role===4" type="text" value="11" readonly="readonly" size="10" v-model="condition.provinceId"/>
+						<select v-else style="width: 100px;height: 24px;" v-model="condition.provinceId" @change="getCityByProvinceId()">
+							<option value="-1" selected="selected">请选择省份</option>
+							<option v-for="province in provinceList" :value="province.provinceId">{{province.province}}</option>
+						</select>&nbsp;
+						<input v-if="demand.role===3" type="text" readonly="readonly" size="10" v-model="condition.cityId"/>
+						<select v-else style="width: 105px;height: 24px;" v-model="condition.cityId">
+							<option value="-1" selected="selected">请选择城市</option>
+							<option v-for="city in cityList" :value="city.cityId">{{city.city}}</option>
+						</select>&nbsp;&nbsp;
+					</div>
+					<div class="col-lg-1 col-md-1 col-sm-1">		
+						<a href="javascript:void(0);" role="button" @click="importExcel()" class="btn btn-success btn-sm">下载报表</a>
+					</div>
+		    	</div>
+		    	<div class="row" style="padding-top: 4px;">
+		    		<div class="col-lg-2 col-md-2 col-sm-2" v-model="condition.insuranceAmount">		
+						&nbsp;&nbsp;&nbsp;&nbsp;保费 <input type="text" placeholder="请输入保费" v-model="condition.insuranceAmount" size="12"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2" >		
+						生效日期<input type="date" style="width: 115px;" v-model="condition.startDate"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2">		
+						终止日期<input type="date" style="width: 115px;"  v-model="condition.endDate"/>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2">
+						&nbsp;&nbsp;&nbsp;&nbsp;状态<input v-if="demand.role===2" size="12" type="text" readonly="readonly" value="待审核"/>	
+						<input v-else-if="demand.role===1" size="12" type="text" readonly="readonly" value="待上传"/>	
+						 <select v-else style="width: 115px;height: 24px;" v-model="condition.policyStatus">
+							<option value="-1">请选择</option>
+							<option v-for="status in policyStatusList" :value="status.statusId">{{ status.statusName }}</option>
+						</select>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-3">		
+						车辆价格  <input type="text" placeholder="最低价格" size="7" v-model="condition.lowPrice"/>&nbsp;--
+						 <input type="text" placeholder="最高价格" size="7" v-model="condition.highPrice"/>&nbsp;
+						
+					</div>
+					<div class="col-lg-1 col-md-1 col-sm-1">		
+						<a href="javascript:void(0);" @click="getPolicyList(1,page.pageSize)" role="button" class="btn btn-primary btn-sm">&nbsp;&nbsp;&nbsp;查&nbsp;询&nbsp;&nbsp;&nbsp;</a>
+					</div>
+		    	</div>
+		    </div>
+		    
+		    <div class="table-responsive" style="padding-top: 10px;" v-if="dataList.length >0">          
+		       <table class="table table-striped table-bordered" style="text-align: center;">
+		         <thead>
+		           <tr align="center">
+		             <th style="text-align: center;">保单号</th>
+		             <th style="text-align: center;">投保人姓名</th>
+		             <th style="text-align: center;">品牌型号</th>
+		             <th style="text-align: center;">区域</th>
+		             <th style="text-align: center;">车辆价格</th>
+		             <th style="text-align: center;">保费</th>
+		             <th style="text-align: center;">保单生效日期</th>
+		             <th style="text-align: center;">保单终止日期</th>
+		             <th style="text-align: center;">业务员姓名</th>
+		             <th style="text-align: center;">保单状态</th>
+		             <th  v-if="demand.role===2" style="text-align: center;">操作</th>
+		           </tr>
+		         </thead>
+		         <tbody>
+		           <tr v-for="policy in dataList">
+		             <td>{{ policy.policyNum }}</td>
+		             <td>{{ policy.policyHolder.personnelName }}</td>
+		             <td>{{ policy.carInfo.brandInfo.brandname}}{{policy.carInfo.versionInfo.versionName}}</td>
+		             <td>{{ policy.policyHolder.province.province }}{{ policy.policyHolder.city.city }}</td>
+		             <td>{{ policy.carInfo.versionInfo.carOffer }}</td>
+		             <td>{{ policy.insuranceAmount }}</td>
+		             <td>{{ policy.billStartDate }}</td>
+		             <td>{{ policy.billEndDate}}</td>
+		             <td><a href="javascript:void(0)" @click="goDetail(policy.operator.empId)" style="color: #FF6600;font-weight: 600;" >{{ policy.operator.empName }}</a></td>
+		             <td>{{ policy.statusInfo.statusName }}</td>
+		             <td v-if="demand.role===2"><a href="javascript:void(0)" @click="toAuditPage(policy.policyId)" style="color: #16BE69;font-weight: 600;">审核资料</a></td>
+		           </tr>
+		         </tbody>
+		       </table>
+		      <div align="center">
+	              <navigation :pages="page.totalPage" :current.sync="page.IndexPage" @navpage="getPolicyList"
+	                :total-count="page.totalCount"></navigation>
+              </div>
+		      </div>
+		      <div id="nullMsg" v-if="dataList <= 0">
+		          <p>什么也没有找到...</p>
+		       </div>
+		</div>
+	</body>
+</html>

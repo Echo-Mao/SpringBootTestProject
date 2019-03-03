@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>七武海车险协议</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../js/vue.min.js"></script>
+		<script type="text/javascript" src="../js/vue-resource.js"></script>
+		<script type="text/javascript" src='../js/getUrlParam.js'></script>
+	</head>
+	<body style="background-color: #FAFAFA;">
+		<!--导航栏-->
+		<div>
+			<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+			<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+			<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+			<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+			
+			<a href="foreground-login.html" style="color: #000000;position: absolute;top:7px;right: 168px;">退出登录</a>
+		</div>
+			
+		<div id='detailContent' style="width: 950px;background-color: #FFFFFF;position: absolute;top: 100px;left:325px;padding: 60px 100px 100px 100px;">
+			<br /><br />
+			<div align="center"><font style="font-size: 18px;font-weight: 600;">七武海车险保单</font></div><br />
+			
+			<font style="font-weight: 600;">本公司依据投保人申请，按下列条件承保</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr style="height: 26px;">
+					<td style="width: 25%;">投保单号</td>
+					<td style="width: 25%;">{{policyNumber}}</td>
+					<td style="width: 25%;">保险期间</td>
+					<td style="width: 25%;">{{billLong}}天</td>
+				</tr>
+				<tr style="height: 26px;">
+					<td>保单生效时间</td>
+					<td>{{billStartDate}}</td>
+					<td>保单失效时间</td>
+					<td>{{billEndDate}}</td>
+				</tr>
+			</table><br/>
+			
+			<font style="font-weight: 600;">投保人信息</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr style="height: 26px;">
+					<td style="width: 25%;">姓名</td>
+					<td style="width: 25%;">{{applicantName}}</td>
+					<td style="width: 25%;">手机号</td>
+					<td style="width: 25%;">{{applicantPhone}}</td>
+				</tr>
+				<tr style="height: 26px;">
+					<td style="width: 25%;">证件类型</td>
+					<td style="width: 25%;">{{applicantPaperType}}</td>
+					<td style="width: 25%;">证件号</td>
+					<td style="width: 25%;">{{applicantPaperNum}}</td>
+				</tr>
+			</table>
+			
+			<font style="font-weight: 600;">受益人信息</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr style="height: 26px;">
+					<td style="width: 25%;">姓名</td>
+					<td style="width: 25%;">{{insuredPersonName}}</td>
+					<td style="width: 25%;">手机号</td>
+					<td style="width: 25%;">{{insuredPersonPhone}}</td>
+				</tr>
+				<tr style="height: 26px;">
+					<td style="width: 25%;">证件类型</td>
+					<td style="width: 25%;">{{insuredPersonPaperType}}</td>
+					<td style="width: 25%;">证件号</td>
+					<td style="width: 25%;">{{insuredPersonPaperNum}}</td>
+				</tr>
+			</table>
+			
+			<font style="font-weight: 600;">车主信息</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr style="height: 26px;">
+					<td style="width: 25%;">姓名</td>
+					<td style="width: 25%;">{{carOwnerName}}</td>
+					<td style="width: 25%;">手机号</td>
+					<td style="width: 25%;">{{carOwnerPhone}}</td>
+				</tr>
+				<tr style="height: 26px;">
+					<td style="width: 25%;">证件类型</td>
+					<td style="width: 25%;">{{carOwnerPaperType}}</td>
+					<td style="width: 25%;">证件号</td>
+					<td style="width: 25%;">{{carOwnerPaperNum}}</td>
+				</tr>
+			</table>
+			
+			<br/>
+			<font style="font-weight: 600;">险种信息信息</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr style="height: 26px;" v-for='item in insuranceList'>
+					<td style="width: 25%;">{{item.insuranceName}}</td>
+					<td style="width: 25%;">￥{{item.insurancePrice}}</td>
+					<td style="width: 25%;"></td><td style="width: 25%;"></td>			
+				</tr>
+			</table>
+			
+			<br/>
+			<font style="font-weight: 600;">保费：{{ insuranceAmount}}元</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr>
+					<td>保险相关信息参见<a href="agreement.html">&nbsp;&lt;七武海协议&gt;</a></td>
+				</tr>
+			</table>
+			
+			<font style="font-weight: 600;">特别约定</font>
+			<table class="table table-condensed" style="width: 100%;margin-top: 10px;">
+				<tr>
+					<td >发生保险事故时，被保险人或其允许的驾驶人应当及时采取合理的、必要的施救和保护措施，防止或者减少损失，并在保险事故发生后48小时内通知保险人。被保险人或其允许的驾驶人根据有关法律法规规定选择自行协商方式处理交通事故的，应当立即通知保险人。被保险人或其允许的驾驶人根据有关法律法规规定选择自行协商方式处理交通事故的，应当协助保险人勘验事故各方车辆、核实事故责任，并依照《道路交通事故处理程序规定》签订记录交通事故情况的协议书。被保险人索赔时，应当向保险人提供与确认保险事故的性质、原因、损失程度等有关的证明和资料。 
+					</td>
+				</tr>
+			</table>
+			
+			<p>签发机构：中国七武海车险股份有限公司</p>
+		<div>	
+		<img src="../img/logo.png" height="35px" style="position: absolute;top: 50px;left: 335px;"/>
+		<font style="font-weight: 800;font-size: 22px;font-family: '微软雅黑';color: #337AB7;position: absolute;top: 52px;left: 376px;">七武海车险股份有限公司</font>
+		</div>
+		</div>
+	</body>
+<script type="text/javascript">
+
+var protocol = window.location.protocol;
+var host = window.location.hostname;
+var port = window.location.port;
+
+
+	var policyNumber= UrlParm.parm("policyNumber");
+	//alert(policyNumber);
+	var detailVue=new Vue({
+		el:"#detailContent",
+		data:{
+			policyNumber:'',//保单号
+			billStartDate:'',//保单生效日期
+			billEndDate:'',//保单失效日期
+			billLong:'',	//保单持续时间	
+			applicantName:'',// 投保人姓名 
+			insuredPersonName:'',//被保人姓名
+			carOwnerName:'',//车主姓名
+			applicantPhone:'',//投保人手机
+			insuredPersonPhone:'',//被保人手机
+			carOwnerPhone:'',//车主手机
+			applicantPaperType:'',//投保人证件类型
+			insuredPersonPaperType:'',//被保人证件类型	
+			carOwnerPaperType:'',//车主证件类型
+			applicantPaperNum:'',//投保人证件号码
+			insuredPersonPaperNum:'',//被保人证件号码
+			carOwnerPaperNum:'',//车主证件号码	
+			insuranceList:[],//险种数组
+			insuranceAmount:'',//保险总价
+			/*登陆信息*/
+			loginInfo:{
+				loginId:'',
+				loginName:'',
+				loginPwd:'',
+				loginStatus:''
+			}
+		},
+		mounted:function(){
+			//判断是否登陆
+			this.getLoginInfo();
+			this.showMyDetail();
+		},
+		methods:{
+			getLoginInfo:function(){
+				this.$http.post(protocol+"//"+host+":"+port+"/getLoginInfo.action").then(
+						function(res){
+							this.loginInfo=res.data.loginInfo;
+							if(res.data.loginInfo==null){
+								alert("未登陆，请先登陆");
+								window.location = "/foreground/foreground-login.html";
+							}
+						},
+						function(res){
+							this.loginName="";
+						}
+					);
+			},
+			showMyDetail:function(){
+				var params={"policyNumber":policyNumber};//传入policyNumber
+				this.$http.post(protocol+"//"+host+":"+port+"/myInsurance/showPolicyDetail.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.policyNumber=res.data.policyNumber;
+							this.billStartDate=res.data.billStartDate;
+							this.billEndDate=res.data.billEndDate;
+							this.billLong=res.data.billLong;		
+							this.applicantName=res.data.applicantName;
+							this.insuredPersonName=res.data.insuredPersonName;
+							this.carOwnerName=res.data.carOwnerName;
+							this.applicantPhone=res.data.applicantPhone;
+							this.insuredPersonPhone=res.data.insuredPersonPhone;
+							this.carOwnerPhone=res.data.carOwnerPhone;
+							this.applicantPaperType=res.data.applicantPaperType;
+							this.insuredPersonPaperType=res.data.insuredPersonPaperType;
+							this.carOwnerPaperType=res.data.carOwnerPaperType;
+							this.applicantPaperNum=res.data.applicantPaperNum;
+							this.insuredPersonPaperNum=res.data.insuredPersonPaperNum;
+							this.carOwnerPaperNum=res.data.carOwnerPaperNum;
+							this.insuranceList=res.data.insuranceList;
+							this.insuranceAmount=res.data.insuranceAmount;
+						},
+						function(res){
+							alert('错了'+res.data);
+						}
+				);			
+			},
+		}
+		
+	})
+</script>	
+</html>
+

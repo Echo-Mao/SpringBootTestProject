@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 员工信息查询模块   -->
+<mapper namespace="com.nbui.employee.dao.IEmpDao">
+
+ <!-- 1查询所有员工信息  -->
+	<select id="findAll" parameterType="EmpCondition" resultMap="empWithTable">
+        select <include refid="empColumn"></include> from emp_info where empstatus=1
+        <include refid="empCondition"></include>
+    </select>
+  
+ <!-- 2根据姓名和手机号查询员工 findByNameAndPhone  -->
+  	<select id="findByNameAndPhone" parameterType="EmpInfo" resultMap="empWithTable">
+  		select <include refid="empColumn"></include> from emp_info 
+  			where empstatus=1 and empname like concat(concat('%',#{empName}),'%') 
+  				and empphone = #{phoneNum}
+  	</select>
+  
+ 
+ <!-- 3添加   -->
+ 	<!-- <insert id="addEmpInfo" parameterType="EmpInfo">
+ 		insert into emp_info(<include refid="empColumn"></include>) 
+ 			values(seq_emp_empid.nextval,seq_login_loginid.nextval,'',#{roleId},#{empName},
+ 				'',#{birthday},#{phoneNum},'','',#{provinceId},
+ 				#{cityId},1,sysdate,sysdate,1)
+ 	</insert> -->
+ 
+ 	<insert id="addEmpInfo" parameterType="EmpInfo">
+ 		insert into emp_info(<include refid="empColumn"></include>) 
+ 			values(seq_emp_empid.nextval,seq_emp_empid.currval,#{loginPwd},#{roleId},#{empName},
+ 				#{gender},#{birthday},#{phoneNum},#{email},#{paperNum},#{provinceId},
+ 				#{cityId},1,sysdate,sysdate,1)
+ 	</insert>
+ 
+ <!-- 4修改权限   注意这里的empId是要修改的员工的id，不是登录员工的id-->
+ 	<update id="updateRoleId" parameterType="EmpInfo">
+ 		update emp_info set empmodifydate=sysdate ,emprid=#{roleId}
+ 		where empid=#{empId}
+ 	</update>
+ 
+ <!-- 5删除   软删除，单删除-->
+  	<update id="deleteByEmpId" parameterType="Integer">
+  		update emp_info set empstatus=0 where empid=#{empId}
+  	</update>
+  
+ <!--  6查询 根据员工id查询员工信息 -->
+  	<select id="findByEmpId" parameterType="Integer" resultMap="empWithTable">
+  		select <include refid="empColumn"></include> from emp_info 
+  			where empstatus=1 and empid = #{empId}
+  	</select>
+  	
+  	
+ <!--  属于员工登录部分   -->
+  <!-- 按工号密码查询员工 -->
+  <select id="findEmpByNameAndPwd" parameterType="com.nbui.entity.EmpInfo" resultMap="empWithTable">
+      SELECT <include refid="empColumn" /> FROM EMP_INFO WHERE empstatus=1
+      and emploginid=#{loginId} and emppassword=#{loginPwd}
+  </select>
+  	
+ 
+<!--  7修改登录员工个人信息    -->
+  	<!--  updateEmpInfo  -->
+
+  	<update id="updateEmp" parameterType="EmpInfo">
+ 		update emp_info set empmodifydate=sysdate 
+ 		<if test='birthday != null'>
+ 			,empbirthday=#{birthday}
+ 		</if>
+ 		<if test='gender != null and gender != ""'>
+ 			,empgender=#{gender}
+ 		</if>
+ 		<if test='phoneNum != null and phoneNum != ""'>
+ 			,empphone=#{phoneNum}
+ 		</if>
+ 		<if test='email != null and email != ""'>
+ 			,empemail=#{email}
+ 		</if>
+ 		where empid=#{empId}
+ 	</update>
+
+
+
+<!--  8修改员工登录信息(密码)-->
+
+ 	<update id="updateEmpPassword" parameterType="EmpInfo">
+  		update emp_info set emppassword=#{loginPwd} where emploginid=#{loginId} 		
+  	</update>
+
+  	
+
+  	 	
+<!--  9不要条件的查询所有  不需要   --> 	
+ 	<!--  findAllEmpInfo -->
+ 	
+    
+    
+    
+    
+ <!--   员工表格字段    -->
+    <sql id="empColumn">
+    	empid,emploginid,emppassword,emprid,empname,empgender,
+    	empbirthday,empphone,empemail,empidcard,empprovince,empcity,
+    	incumbency,empcreatedate,empmodifydate,empstatus
+    </sql>
+    
+
+    
+ <!--  员工查询条件    -->
+ 
+    <sql id="empCondition">
+    		<if test='empName != null and empName != ""'>
+    			and empname like concat(concat('%',#{empName}),'%')
+    		</if>
+    		<if test='loginId != null and loginId > 0'>
+    			and emploginid = #{loginId}
+    		</if>
+    		<if test='age != null and age>0'>
+    			and sysdate - empbirthday &gt;= #{age}*365 and sysdate - empbirthday &lt;= (#{age}+1)*365
+    			<!-- and sysdate - empbirthday &gt;= #{age}*365 and sysdate - empbirthday &lt;= (#{age}+1)*365 -->
+    		</if>
+    		<if test='provinceId != null and provinceId > 0'>
+    			and empprovince = #{provinceId}
+    		</if>
+    		<if test='cityId != null and cityId > 0'>
+    			and empcity = #{cityId}
+    		</if>
+    		<if test='phoneNum != null and phoneNum != ""'>
+    			and empphone like concat(concat('%',#{phoneNum}),'%')
+    		</if>
+    		<if test='roleId != null and roleId > 0'>
+    			and emprid = #{roleId}
+    		</if>
+    		<if test='incumbency != null and incumbency>=0'>
+    			and incumbency = #{incumbency}
+    		</if>
+    		<if test='loginEmpId != null'> 
+    		<!-- 通过员工id号获取权限，再根据权限查   -->
+    			<!-- 1业务员  只能查看个人信息，在员工表中不考虑查询 -->
+    			<!-- 2审核员  只能查看个人信息，在员工表中不考虑查询 -->
+    			
+    			<!-- 3一级管理员  看本市的业务员和审核员-->
+    			<!-- 4二级管理员  看本省的业务员、审核员、一级管理员-->
+    			<!-- 5三级管理员  看全国的业务员、审核员、一级管理员、二级管理员-->
+    			<!-- 6超级管理员  看全国的业务员和审核员、一级管理员、二级管理员、三级管理员-->	
+    			and (
+    				 <!-- 3  -->
+    				(emprid in (
+	    				(	select roleid from role_info where roleid &lt; 
+	    						(select e1.emprid emprid from emp_info e1 where e1.empid = #{loginEmpId})
+	    					)
+	    				) and empcity = 
+	    					(select e2.empcity empcity from emp_info e2 
+	    						where e2.empid = #{loginEmpId} and e2.emprid=3)
+	    			) or 
+	    			<!-- 4  -->
+	    			(emprid in (
+	    				(	select roleid from role_info where roleid &lt; 
+	    						(select e3.emprid emprid from emp_info e3 where e3.empid = #{loginEmpId})
+	    					)
+	    				) and empprovince = 
+	    					(select e4.empprovince empprovince from emp_info e4 
+	    						where e4.empid = #{loginEmpId} and e4.emprid=4) 
+	    			) or
+	    			<!-- 5  -->
+	    			(emprid in (
+	    				(select roleid from role_info where roleid &lt; 
+	    						(select e5.emprid emprid from emp_info e5 where e5.empid = #{loginEmpId} and e5.emprid=5)
+	    					)
+	    				)
+	    			) or
+	    			<!-- 6  -->
+	    			(emprid in (
+	    				(select roleid from role_info where roleid &lt; 
+	    						(select e6.emprid emprid from emp_info e6 where e6.empid = #{loginEmpId} and e6.emprid=6)
+	    					)
+	    				)
+	    			)
+    			)
+    		</if>
+    		
+    		
+    </sql>
+    
+ <!--  实体类与表格的映射   -->  
+    <resultMap type="EmpInfo" id="empWithTable">
+        <id property="empId" column="empid"/>
+        <result property="loginId" column="emploginid"/>
+        <result property="loginPwd" column="emppassword"/>
+        <result property="roleId" column="emprid"/>
+        <result property="empName" column="empname"/>
+        <result property="gender" column="empgender"/>
+        <result property="birthday" column="empbirthday"/>
+        <result property="email" column="empemail"/>
+        <result property="phoneNum" column="empphone"/>
+        <result property="paperNum" column="empidcard"/>
+        <result property="provinceId" column="empprovince"/>
+        <result property="cityId" column="empcity"/>
+        <result property="incumbency" column="incumbency"/>
+        <result property="createTime" column="empcreatedate"/>
+        <result property="modifyTime" column="empmodifydate"/>
+        <result property="viewState" column="empstatus"/>
+        
+<!-- 注意命名空间 需要修改成实际的查询语句的空间 -->
+        <association property="role" column="emprid" javaType="Role"
+            select="com.nbui.role.dao.IRoleDao.findRoleById">
+        </association>
+        <association property="city" column="empcity" javaType="City"
+            select="com.nbui.provinceCity.dao.ICityDao.findCityById">
+        </association>
+        <association property="province" column="empprovince" javaType="Province"
+            select="com.nbui.provinceCity.dao.IProvinceDao.queryProvinceById">
+        </association>
+    </resultMap>
+</mapper>

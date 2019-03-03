@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.policy.dao.IBuyInsuranceDao">   
+    <resultMap type="carInfo" id="carInfoWithTable">
+        <id property="carId" column="carid"/>
+        <result property="registerDate" column="carregisterdate"/>
+        <result property="plateNum" column="carplatenumber"/>
+        <result property="frameNum" column="framenum"/>
+        <result property="engineNum" column="enginenum"/>
+        <result property="brandName" column="brandname"/>
+        <result property="versionName" column="versionname"/>
+        <result property="busLoad" column="carbusload"/>
+        <result property="brandId" column="carbrandid"/>
+        <result property="versionId" column="carversionid"/>
+    </resultMap>
+    
+    <resultMap type="relatedPersonnel" id="relatedPersonnelWithTable">
+        <id property="personnelId" column="IPID"/>
+        <result property="personnelName" column="ipname"/>
+        <result property="paperTypeId" column="ippapertype"/>
+        <result property="paperNum" column="ippapernum"/>
+        <result property="phoneNum" column="ipphone"/>
+        <result property="ipProvinceNum" column="ipprovincenum"/>
+        <result property="ipCity" column="ipcity"/>     
+        <result property="address" column="ipadress"/>
+    </resultMap>
+    
+	<select id="queryCarInfoByCarId" parameterType="int" resultMap="carInfoWithTable">
+        select carregisterdate,carplatenumber,framenum,enginenum,brandname,versionname,carbusload
+		from brand_info b join car_info c on b.brandid=c.carbrandid join version_info v on v.versionid=c.carversionid
+		where c.carid=#{carId}
+    </select>
+    
+    <select id="queryCarInfoNolinkedlistByCarId" parameterType="int" resultMap="carInfoWithTable">
+        select carregisterdate,carplatenumber,framenum,enginenum,carbrandid,carversionid,carbusload
+		from car_info where carid=#{carId}
+    </select>
+    
+    <insert id="insertRelatedPersonnel" parameterType="RelatedPersonnel">
+        <selectKey keyProperty="personnelId" resultType="int" order="AFTER">
+    		select seq_ip_ipid.currval from dual
+    	</selectKey>
+         insert into insurance_personnel_info (ipId,ipName,ipPhone,ipPaperType,ipPaperNum,ipProvinceNum,ipCity,ipAdress,ipStatus,ipCreateDate)
+         values (seq_ip_ipid.nextval,#{personnelName},#{phoneNum},#{paperTypeId},#{paperNum},#{ipProvinceNum},#{ipCity},#{address},1,sysdate)
+    </insert >
+    
+    <insert id="insertCar" parameterType="CarInfo">
+         <selectKey keyProperty="carId" resultType="int" order="AFTER">
+    		select seq_car_carid.currval from dual
+    	</selectKey>
+         insert into CAR_INFO (carid,vehicleownerid,carregisterdate,carplatenumber,framenum,enginenum,carbrandid,carversionid,carbusload,carstatus,carcreatedate)
+         values (seq_car_carid.nextval,#{carOwnerId},#{registerDate},#{plateNum},#{frameNum},#{engineNum},#{brandId},#{versionId},#{busLoad},1,sysdate)
+    </insert >
+    
+    <insert id="insertPolicy" parameterType="PolicyInfo">
+         <selectKey keyProperty="policyId" resultType="int" order="AFTER">
+    		select SEQ_POLICY_POLICYID.currval from dual
+    	</selectKey>
+         insert into policy_info (policyid,policynumber,carowner,empid,userid,carid,policystatusid,insurancename,insurancecompany,policycreatedate,policystatus)
+         values (SEQ_POLICY_POLICYID.nextval,#{policyNum},#{carOwnerId},#{empId},#{userId},#{carId},1,'汽车商业险','七武海',sysdate,1)
+    </insert>
+    
+    <insert id="insertPolicyInsurance" parameterType="PolicyInsurance">
+         insert into policy_insurance (policyinsuranceid,policyid,insurance,insuranceprice) 
+		 values(SEQ_PI_POLICYINSURANCEID.nextval,#{policyId},#{Insurance},#{InsurancePrice})
+    </insert>
+    
+    <select id="queryCarOwnerInfoByCarOwnerId" parameterType="int" resultMap="relatedPersonnelWithTable">
+        select ipname,ippapertype,ippapernum,ipphone,ipprovincenum,ipcity,ipadress from insurance_personnel_info where ipid=#{carOwnerId}
+    </select>
+    
+    <update id="updateCarOwner" parameterType="RelatedPersonnel">
+    	update insurance_personnel_info set ipName=#{personnelName},ipPhone=#{phoneNum},
+    	ipPaperType=#{paperTypeId},ipPaperNum=#{paperNum},ipProvinceNum=#{ipProvinceNum},
+    	ipCity=#{ipCity},ipAdress=#{address},ipmodifyDate=sysdate
+    	where ipid=#{personnelId}
+    </update>
+    
+    <update id="updatePolicyPersonnel" parameterType="PolicyInfo">
+    	update policy_info set applicant=#{policyHolderId},insuredperson=#{insurantId},policymodifydate=sysdate,policystatusid=2
+    	where policyid=#{policyId}
+    </update>
+    
+    <select id="getPolicyNumerByPolicyId" resultType="String">
+        select policynumber from policy_info where policyid=#{policyId}
+    </select>
+    
+    <delete id="deletePolicyInsuranceByPolicyId">
+    	delete from policy_insurance where policyid=#{policyId}
+    </delete>
+    
+    <update id="updateCarInfo" parameterType="CarInfo">
+	    update car_info set carregisterdate=#{registerDate},carplatenumber=#{plateNum},framenum=#{frameNum},
+	    					enginenum=#{engineNum},carbrandid=#{brandId},carversionid=#{versionId},
+	    					carbusload=#{busLoad},carmodifydate=sysdate
+	    where carid=#{carId}
+    </update>
+    
+     <update id="updatePolicyInfoByAddInsuranceAmount" parameterType="PolicyInfo">
+	   update policy_info set insuranceamount=#{insuranceAmount},policymodifydate=sysdate
+    	where policyid=#{policyId}
+    </update>
+    
+</mapper>

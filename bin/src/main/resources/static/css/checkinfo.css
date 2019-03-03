@@ -1,0 +1,8 @@
+
+a{
+	text-decoration: none;
+	color: black;
+}
+
+a:link,a:visited{text-decoration:none;}
+a:hover{color:#CC3300;text-decoration:none;}

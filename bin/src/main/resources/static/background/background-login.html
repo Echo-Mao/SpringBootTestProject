@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="Shortcut Icon" href="../img/logo2.png" />
+    
+		<title>后台登陆</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		
+		<script type="text/javascript" src="/js/vue.min.js"></script>
+		<script type="text/javascript" src="/js/vue-resource.js"></script>
+		
+		<style type="text/css">
+			a {
+				color: #00BCC7;
+			}
+			
+			.btnSubmit {
+				background-color: #00BCC7;
+				color: white;
+			}
+			
+			.btnSubmit:hover {
+				background-color: #519BAE;
+				color: white;
+			}
+			
+			#img {
+				position: absolute;
+				left: 40%;
+				top: 190px;
+				width: 46px;
+				height: 43px;
+			}
+			#bigDiv{
+				margin: 0px auto;
+				width: 100%;
+				height:740px ;
+				border: 1px solid white;
+				background: url("../img/login.jpg");
+			}	
+			#loginDiv{
+				margin: 200px auto;
+			}
+		</style>
+		
+		<script type="text/javascript">
+		    function login(){
+		    	var name=$("#loginId").val();
+		    	var pass=$("#loginPwd").val();
+		    	var remember =$("input[name='rememberPwd']:checked").val()==undefined?false:true;
+		    	var regexp=/^[0-9]{6}$/;
+		    	if(!regexp.test(name)){
+		    		alert("请输入6位数工号");
+		    		return;	    		
+		    	}
+		    	var regexp2=/^[A-z 0-9]{6}$/;
+		    	if(!regexp.test(pass)){
+		    		alert("请输入6位密码");
+		    		return;
+		    	}
+		    	$.ajax({
+					url : "/EmpLogin.action",
+					data : "loginId=" + name+ "&loginPwd="+ pass+"&remember="+remember,
+					dataType : "json",
+					//contentType : "application/json;charset=utf-8",
+					type : "post",
+					success : function(rs) {
+						$("#errorMsg").text("");
+						if (rs.msg== "success") {
+							window.location = "/background/background-index.html";
+						} else {
+							$("#errormsg").text(rs.msg);
+						}
+					}
+				});
+		    	
+		    }
+		    
+		  //回车键登陆
+			$(function(){
+				$("body").keydown(function(){
+					if (event.keyCode == "13") {//keyCode=13是回车键
+						$("#btnSubmit").click();
+						 }
+					
+				});
+				
+			});
+		</script>
+	</head>
+		
+
+	<body>
+		<div id="bigDiv">
+			
+			<div id="loginDiv">
+				<div>
+					<form class="form-horizontal" role="form">
+						<img src="../img/logo2.png" class="img-circle" id="img" alt="logo"/>
+						<h3 align="center" class="text-primary">七武海后台管理系统</h3>
+						<div class="form-group" style="padding-top: 40px;">
+							<label for="firstname" class="col-sm-2 control-label col-sm-offset-3">工号:</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control col-sm-6" name="loginId" id="loginId" v-model="loginEmp.loginId" placeholder="请输入工号">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="lastname" class="col-sm-2 control-label col-sm-offset-3">密码:</label>
+							<div class="col-sm-2">					
+				               <input type="password" class="form-control col-sm-6" name="loginPwd" id="loginPwd" v-model="loginEmp.loginPwd" placeholder="请输入密码" onpaste="return false" oncontextmenu="return false" oncopy="return false" oncut="return false"/>
+							   <font id="errormsg" color="red"></font>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-5 col-sm-3">
+								<div class="checkbox">
+									<label> <input type="checkbox" id="rememberPwd"
+							name="rememberPwd" v-model="remember">请记住我
+						</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-5 col-sm-2">
+								<button type="button" class="btn btn-default btnSubmit form-control col-sm-8 " id="btnSubmit" onclick="login()">登录</button>
+								<br /> <br />
+								<a href="javascript:void(0)" onclick="location.href='background-change-password.html'">修改密码?点击我</a><br />
+								<font id="errorMsg" color="red"></font>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+		$(function(){
+			var protocol = window.location.protocol;
+			var host = window.location.hostname;
+			var port = window.location.port;
+		
+			var loginEmp = new Vue({
+				el:"#bigDiv",
+				data:{
+					loginEmp:{
+						loginId:"",
+						loginPwd:""
+					},
+					remember:false
+				},
+				created:function(){
+					this.getLoginIdAndPwd();
+				},
+				methods:{
+					getLoginIdAndPwd:function(){
+						var _this = this;
+						_this.$http.post(protocol+"//"+host+":"+port+"/getLoginIdAndPwd.action").then(
+								function(res){
+									_this.remember = res.data.rememberFlag;
+									if(_this.remember){
+										_this.loginEmp = res.data.loginEmp;
+									}
+					            },
+								function(res){
+									alert("错了");
+									console.log(res);
+								});
+					}
+				}
+			});
+			
+		})
+		
+		</script>
+		
+	</body>
+
+</html>

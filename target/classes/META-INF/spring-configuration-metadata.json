@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "spring.cache.redis",
+      "type": "com.nbui.config.RedisConfig",
+      "sourceType": "com.nbui.config.RedisConfig"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

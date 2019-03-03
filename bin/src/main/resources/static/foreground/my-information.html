@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的资料</title>
+			<script type="text/javascript" src="../js/jquery-1.11.3.min.js"></script>
+			<link href="../css/bootstrap.css" rel="stylesheet" type="text/css" />
+			<script type="text/javascript" src="../js/bootstrap.js"></script>
+			 <link href="../css/my-information.css" rel="stylesheet" type="text/css" />
+			 <script type="text/javascript" src="../js/my-information.js"></script>
+			 <script type="text/javascript" src="../js/vue.min.js"></script>
+			 <link rel="shortcut icon" type="image/x-icon" href="../img/logo.png" />
+			 <script type="text/javascript" src="../js/vue.min.js"></script>
+			<script type="text/javascript" src="../js/vue-resource.js"></script>
+			<script type="text/javascript">
+				function updateLoginInfo(){
+					var name=$("#updateUserName").val();
+					var oldPwd=$("#oldPwd").val();
+					var newPwd=$("#newPwd").val();
+					var surePwd=$("#surePwd").val();
+					var loginId=$("#loginId").val();
+					var regexp=/^[A-z 0-9]{6}$/;
+					var regexp2= /^\S{6,16}$/;  
+					if(!regexp2.test(name)){
+						alert("请输入6~16位之间的用户名");
+						return;
+					}
+					if(!regexp.test(oldPwd)){
+						alert("原密码不符合规范,请填写6位字母或数字");
+						return;
+					}
+					if(!regexp.test(newPwd)){
+						alert("新密码不符合规范,请填写6位字母或数字");
+						return;				
+					}
+					if(newPwd==oldPwd){
+						alert("新密码不可与原密码相同，请重新填写");
+						return;
+					}
+					if(newPwd!=surePwd){
+						alert("密码确认不一致，请重新填写");
+						return;
+					}
+					$.ajax({
+						url : "/updateLoginInfo.action",
+						data : "loginName=" + name
+								+ "&loginPwd="
+								+ newPwd+"&loginId="+loginId+"&oldPwd="+oldPwd,
+						dataType : "json",
+						//contentType : "application/json;charset=utf-8",
+						type : "post",
+						success : function(rs){
+							if (rs.msg == "notSame") {
+								alert("原密码错误,请重新输入");
+								return;
+							}
+							else if(rs.msg == "success"){
+								alert("修改成功,请重新登陆");
+								window.location = "/foreground/foreground-login.html";
+								return;
+							}else{
+								alert("错误");
+								return;
+							}
+							}
+						});
+				}
+			</script>	
+				
+			<style>
+				[v-cloak]{
+					display:none ;
+				}
+			</style> 
+	</head>
+	<body id="body">
+		<div id="contents">
+		<!-- 模态框（Modal）修改个人信息 -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">修改个人信息</h4>
+					</div>
+					<div class="modal-body">
+						<table class="table">
+						  <tbody>
+						 <tr>
+						 	<td colspan='2' style="text-align:center;color:red;" v-cloak>{{erroMsg}}</td>
+						 </tr>
+							<tr>
+							  <td>真实姓名：</td>
+							  <td><input type="text" v-model="UserInfo.userName" id="updateName" maxlength="20"></td>
+							</tr>
+							<tr>
+							  <td>证件类型</td>
+							  <td>
+								<select id="updateType" v-model="UserInfo.paperTypeId">
+									<option value=1>身份证</option>
+									<option value=2>户口本</option>
+									<option value=3>护照</option>
+								</select>
+							  </td>
+							</tr>
+							<tr>
+							  <td>证件号码</td>
+							  <td><input type="text" id="updateCardNum" v-model="UserInfo.paperNum" maxlength="18" ></td>
+							</tr>
+							<tr>
+							  <td>性别</td>
+							  <td><input type="radio" v-model="UserInfo.gender" name="gender" value="男">男&nbsp;&nbsp;<input  type="radio" v-model="UserInfo.gender" name="gender" value="女">女<td>
+							</tr>
+							<tr>
+							  <td><select style="width: 80px;" v-model="UserInfo.provinceId"  @change="getCityByProvinceId()">
+									    <option value="-1" selected="selected">请选择</option>
+									    <option v-for="province in provinceList" :value="province.provinceId">{{province.province}}</option>
+								 	</select>省&nbsp;
+								    <select style="width: 80px;" v-model="UserInfo.cityId">
+									    <option value="-1">请选择</option>
+									    <option v-for="city in cityList" :value="city.cityId">{{city.city}}</option>
+								    </select>&nbsp;市
+								  
+								    </td>
+							  <td> 详细地址:<br><textarea v-model="UserInfo.address" id="updateCity" rows="3" cols="22" style="resize:none;" maxlength="100"></textarea></td>
+							</tr>
+						</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" >关闭</button>
+						<button type="button" class="btn btn-primary" id="updateButton" @click='updateUserInfo()'>提交更改</button>
+				</div> <!-- /.modal-content -->
+			</div><!-- /.modal -->
+		</div> -->
+		</div>
+		
+		<!-- 模态框（Modal）修改登录信息 -->
+		<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">修改登录信息</h4>
+					</div>
+					<div class="modal-body">
+						<table class="table">
+						  <tbody>
+							<tr>
+							  <td>用户名：</td>
+							  <td><input type="text" id="updateUserName" v-model="loginInfo.loginName" maxlength="16">
+							      <input type="hidden" id="loginId" v-model="loginInfo.loginId">
+							  </td>
+							</tr>
+							<tr>
+							  <td>原密码：</td>
+							  <td><input type="password" id="oldPwd" maxlength="6">
+							  </td>
+							</tr>
+							<tr>
+							  <td>新密码：</td>
+							  <td><input type="password" id="newPwd" maxlength="6"></td>
+							</tr>
+							<tr>
+							  <td>确认密码：</td>
+							  <td><input type="password" id="surePwd" maxlength="6"></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary" id="updateButton" onclick="updateLoginInfo()">提交更改</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal -->
+		</div> -->
+		
+		
+		<!--导航栏-->
+		<div id="daohang">
+			<hr style="width: 100%;height: 33px;background-color:#D7D7D7; position: absolute;top: -20px;left: 0px;"/> 	
+			<a href="foreground-index.html" style="color: #000000;position: absolute;top:7px;left: 168px;">七武海车险首页</a>
+			<a href="javascript:void(0);" style="color: #000000;position: absolute;top:7px;left: 283px;">|</a>
+			<a href="my-information.html" style="color: #000000;position: absolute;top:7px;left: 300px;"><font v-if='loginInfo!=null && loginInfo.loginName!=""' v-cloak>{{loginInfo.loginName}}</font>个人中心</a>
+			
+			<a href="/outLogin.action" style="color: #000000;position: absolute;top:7px;right: 168px;">退出登录</a>
+		</div>
+		
+		
+	<!-- 	主要部分  -->
+		<div id="base">
+			
+			<div class="top_title">
+					<span>
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</span>
+					<span class="text-primary" style="font-size: 30px;font-weight: 600;font-family: '微软雅黑';">七武海车险</span>
+				<!-- <span class="htitle"><b>七武海车险</b></span>
+				<span>省<b>心</b>省<b>钱</b></span> -->
+			</div>
+			<div class="middle_nav">
+				<div class="myinsuerans" id="myinsuerans">我的保险</div>
+				<div class="myfile" id="myfile">我的资料</div>
+			</div>
+			<div class="body">
+				<div class="nav_left">
+					<div class="nav1" style="font-size: 16px">个人信息</div>
+				</div>
+				<div class="content">
+					<div class="content1">
+						<table class="table">
+						  <tbody>
+							<tr>
+							  <td>真实姓名：</td>
+							  <td v-cloak>{{UserInfoBrief.userName}}</td>
+							</tr>
+							<tr>
+							  <td>证件类型</td>
+							  <td v-cloak>{{UserInfoBrief.paperType}}</td>
+							</tr>
+							<tr>
+							  <td>证件号码</td>
+							  <td v-cloak>{{UserInfoBrief.paperNum}}</td>
+							</tr>
+							<tr>
+							  <td>性别</td>
+							  <td v-cloak>{{UserInfoBrief.gender}}</td>
+							</tr>
+							<tr>
+							  <td>常驻城市</td>
+							  <td v-cloak>{{UserInfoBrief.province}}{{UserInfoBrief.city}}</td>
+							</tr>
+							<tr>
+							  <td> <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">修改个人资料</button></td>
+							  <td> <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#loginModal">修改登录信息</button></td>
+							</tr>
+						  </tbody>
+						</table>
+						
+					</div>
+					
+				</div>
+				
+			</div>
+			
+		</div> 
+	</div>
+	</body>
+	<script type="text/javascript">
+	  
+	  var protocol = window.location.protocol;
+	  var host = window.location.hostname;
+	  var port = window.location.port;
+
+	//alert(policyNumber);
+	var myModal=new Vue({
+		el:"#contents",
+		data:{	
+			cityList:[],
+			provinceList:[],
+			erroMsg:'',
+			UserInfoBrief:{
+				loginId:1,
+				userName:'',
+				gender:'',
+			    paperTypeId:1,
+			    paperType:'',
+			    paperNum:'',
+			    provinceId:'',
+			    province:'',
+			    cityId:'',
+			    city:'',
+			    address:''
+			},
+			UserInfo:{
+				loginId:1,
+				userName:'',
+				paperTypeId:'',
+				paperNum:'',
+				gender:'男',
+				provinceId:'',
+				cityId:'',
+				address:''
+			},
+			loginInfo:{
+				loginId:'',
+				loginName:'',
+				loginPwd:'',
+				loginStatus:''
+			}		
+		},
+		mounted:function(){			
+			//获取登陆信息
+			this.getLoginInfo();
+			//1获取所有的省份
+			this.getProvinces();
+			
+			
+		},
+			//查询所有省份
+		methods:{
+			//获取登陆信息
+			getLoginInfo:function(){
+				this.$http.post(protocol+"//"+host+":"+port+"/getLoginInfo.action").then(
+						function(res){
+							this.loginInfo=res.data.loginInfo;
+							if(res.data.loginInfo==null){
+								alert("未登陆，请先登陆");
+								window.location = "/foreground/foreground-login.html";
+							}
+							this.UserInfoBrief.loginId=this.loginInfo.loginId;
+							this.UserInfo.loginId=this.UserInfoBrief.loginId;
+							this.showUserByUserId();
+						},
+						function(res){
+							this.loginInfo.loginName="";
+						}
+					);
+			},
+					showUserByUserId:function(){		
+						var params = {"loginId":this.UserInfo.loginId};
+						this.$http.post(protocol+"//"+host+":"+port+"/myImformation/showUserByUserId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.UserInfoBrief=res.data;
+							this.UserInfo.userName=this.UserInfoBrief.userName;
+							this.UserInfo.paperTypeId=this.UserInfoBrief.paperTypeId;
+							this.UserInfo.paperNum=this.UserInfoBrief.paperNum;
+							this.UserInfo.provinceId=this.UserInfoBrief.provinceId;
+							//省有了属性的时候要把市也加载出来
+							this.getCityByProvinceId();//不然无法匹配市
+							this.UserInfo.cityId=this.UserInfoBrief.cityId;
+							this.UserInfo.address=this.UserInfoBrief.address;
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});					
+						
+					},					
+					getProvinces:function(){
+						var params = {};
+						this.$http.post(protocol+"//"+host+":"+port+"/privince/findAllProvince.action",params,{emulateJSON:true}).then(
+
+						function(res){
+							this.provinceList = res.data.provinceList//返回的是map对象，名字为provinceList
+							
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					//根据省份查询城市
+					getCityByProvinceId:function(){
+						var params = {"provinceId":this.UserInfo.provinceId};
+						this.$http.post(protocol+"//"+host+":"+port+"/city/findAllCityByProinceId.action",params,{emulateJSON:true}).then(
+						function(res){
+							this.cityList = res.data.cityList
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});
+					},
+					refresh:function(){
+						location.reload();
+					},
+					
+					updateUserInfo:function(){
+						if(this.UserInfo.userName==''){this.erroMsg='未输入用户名!';return;}
+						//验证姓名正则
+						var reg = /^[\u4E00-\u9FA5A-Za-z]+$/;
+						//身份证正则
+						var regexIDcard = /(^\d{15}$)|(^\d{17}([0-9]|X)$)/;
+						//户口本正则
+						var regexRegisteredResidence = /^[a-zA-Z0-9]{3,21}$/;   
+						//护照正则
+						var regexPassport = /^1[45][0-9]{7}$|(^[P|p|S|s]\d{7}$)|(^[S|s|G|g|E|e]\d{8}$)|(^[Gg|Tt|Ss|Ll|Qq|Dd|Aa|Ff]\d{8}$)|(^[H|h|M|m]\d{8,10}$)/;    
+						if(!reg.test(this.UserInfo.userName)){
+							this.erroMsg = '姓名无效，请填写有效姓名' ;
+							return ;
+						}
+						if(this.UserInfo.paperNum== ''){
+							this.erroMsg = '您还未填写证件号码' ;
+							return ;
+						}
+						if(this.UserInfo.paperTypeId == 1){
+							if(!regexIDcard.test(this.UserInfo.paperNum)){
+								this.erroMsg = '身份证号码无效，请填写有效身份证' ;
+								return ;
+							}
+						}
+						if(this.UserInfo.paperTypeId == 2){
+							if(!regexRegisteredResidence.test(this.UserInfo.paperNum)){
+								this.erroMsg = '户口本号码无效，请填写有效户口本号码' ;
+								return ;
+							}
+						}
+						if(this.UserInfo.paperTypeId == 3){
+							if(!regexPassport.test(this.UserInfo.paperNum)){
+								this.erroMsg = '护照号码无效，请填写有效护照号码' ;
+								return ;
+							}
+						}
+						if(this.UserInfo.provinceId=='-1'){
+							this.erroMsg='请选择省';
+							return;
+						}
+						if(this.UserInfo.cityId=='-1'){
+							this.erroMsg='请选择市';
+							return;
+						}
+						if(this.UserInfo.address==''){
+							this.erroMsg='您还未输入详细地址';
+							return;
+						}
+						this.erroMsg='';
+						var params = {"UserInfo":JSON.stringify(this.UserInfo)};
+						this.$http.post(protocol+"//"+host+":"+port+"/myImformation/UpdateUserInfo.action",params,{emulateJSON:true}).then(
+						function(res){
+							alert('修改成功!');							
+							this.showUserByUserId();
+						},
+						function(res){
+							alert("系统正忙，请稍后！");
+							console.log(res);
+						});					
+					},
+		},
+		
+	})
+</script>	
+</html>

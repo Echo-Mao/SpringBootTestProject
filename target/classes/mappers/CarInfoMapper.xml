@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nbui.user.dao.ICarDao">
+    <resultMap type="carInfo" id="carInfoWithTable">
+        <id property="carId" column="CARID"/>
+        <result property="carOwnerId" column="VEHICLEOWNERID"/>
+        <result property="brandId" column="CARBRANDID"/>
+        <result property="plateNum" column="CARPLATENUMBER"/>
+        <result property="frameNum" column="FRAMENUM"/>
+        <result property="engineNum" column="ENGINENUM"/>
+        <result property="carType" column="CARTYPE"/>
+        <result property="busLoad" column="carbusload"/>
+        <result property="registerDate" column="CARREGISTERDATE"/>
+        <result property="hasRefit" column="HASREFIT"/>
+        <result property="annualReviewDate" column="ANNUALREVIEWDATE"/>
+        <result property="createTime" column="CARCREATEDATE"/>
+        <result property="modifyTime" column="CARMODIFYDATE"/>
+        <result property="viewState" column="CARSTATUS"/>
+        <association property="brandInfo" javaType="BrandInfo">
+        	<id column="brandid" property="brandId" />
+			<result column="brandname" property="brandname" />
+        </association>
+        <association property="versionInfo" javaType="VersionInfo">
+        	<id column="versionid" property="versionId" />
+			<result column="versionname" property="versionName" />
+        </association>
+        <association property="carOwner" javaType="RelatedPersonnel">
+        	<id column="vehicleownerid" property="personnelId" />
+			<result column="Ipname" property="personnelName" />
+        </association>
+    </resultMap>
+    
+    <!-- 根据车主查询车辆信息 -->
+    <select id="findCarById" parameterType="int" resultMap="carInfoWithTable">
+select ci.vehicleownerid,ci.carplatenumber,ci.framenum,ci.carbusload,ci.carregisterDate,
+ci.enginenum,bi.brandname,vi.versionname,ipi.Ipname from car_info ci inner join brand_info bi
+on ci.carbrandid=bi.brandid inner join version_info vi on ci.carversionid=vi.versionid
+inner join Insurance_personnel_info ipi on ci.vehicleownerid=ipi.ipid where ci.vehicleownerid=#{id}
+    </select>
+    
+    <sql id="allOfCarInfo">
+        CARID,VEHICLEOWNERID,CARBRANDID,CARPLATENUMBER
+        ,FRAMENUM,ENGINENUM,CARTYPE,BUSLOAD,CARREGISTERDATE
+        ,HASREFIT,ANNUALREVIEWDATE,CARCREATEDATE,CARMODIFYDATE,CARSTATUS
+    </sql>
+    
+</mapper>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>七武海车险投保系统登录页面</title>
+		<link href="../css/bootstrap.css" rel="stylesheet">
+		<script src="../js/jquery-1.11.3.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../themes/icon.css">
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<style type="text/css">
+			#bigDiv {
+				width: 1570px;
+				height: 780px;
+			}
+			
+			#divTop {
+				position: absolute;
+			}
+			
+			#logoDIv {
+				position: absolute;
+				left: 108px;
+				top: -3px;
+				height: 59px;
+			}
+			
+			#qwhDiv {
+				width: 200px;
+				position: absolute;
+				left: 189px;
+				top: 22px;
+				height: 32px;
+			}
+			
+			#bodyDiv {
+				position: absolute;
+				width: 1670px;
+				height: 630px;
+				background-image: url(../img/u635.jpg);
+				background-size: 100% 100%;
+				background-repeat: no-repeat;
+				left: -85px;
+				top: 92px;
+			}
+			
+			#footDiv {
+				background-color: #5E5E5E;
+				position: absolute;
+				width: 1586px;
+				height: 61px;
+				left: -1px;
+				top: 721px;
+			}
+			
+			#footContent {
+				position: absolute;
+				width: 746px;
+				height: 20px;
+				left: 446px;
+				top: 19px;
+			}
+			
+			#loginDiv {
+				background-color: white;
+				position: absolute;
+				width: 324px;
+				height: 469px;
+				left: 1285px;
+				top: 59px;
+			}
+			
+			#hyText {
+				position: absolute;
+				left: 26px;
+				top: 13px;
+			}
+			
+			#sjhimgDiv {
+				position: absolute;
+				left: 24px;
+				top: 73px;
+			}
+			
+			#sjhDiv {
+	position: absolute;
+	left: 48px;
+	top: 70px;
+	width: 248px;
+			}
+			
+			#srmmimgDiv {
+				position: absolute;
+				left: 22px;
+				top: 111px;
+			}
+			
+			#srmmDiv {
+	position: absolute;
+	left: 48px;
+	top: 110px;
+	width: 248px;
+	height: 21px;
+			}
+			
+			#qrmmimgDiv {
+				position: absolute;
+				left: 25px;
+				top: 154px;
+			}
+			
+			#qrmmDiv {
+	position: absolute;
+	left: 48px;
+	top: 150px;
+	width: 248px;
+			}
+			
+			#yzmimgDiv {
+				position: absolute;
+				left: 21px;
+				top: 197px;
+			}
+			
+			#yzmDiv {
+	position: absolute;
+	left: 49px;
+	top: 190px;
+	width: 152px;
+	height: 14px;
+			}
+			
+			#hyzDiv {
+	position: absolute;
+	left: 174px;
+	top: 190px;
+	width: 30px;
+	height: 27px;
+			}
+			
+			#dxDiv {
+				position: absolute;
+	left: 49px;
+	top: 190px;
+	width: 152px;
+	height: 14px;
+			}
+			
+			#fsDiv {
+	position: absolute;
+	left: 194px;
+	top: 197px;
+	width: 96px;
+	height: 13px;
+			}
+			
+			#remyhmDiv {
+				position: absolute;
+				left: 27px;
+				top: 444px;
+			}
+			
+			#zhdlDiv {
+				position: absolute;
+				left: 61px;
+				top: 284px;
+				width: 224px;
+			}
+			
+			#xyDiv {
+				position: absolute;
+				left: 60px;
+				top: 321px;
+				width: 242px;
+			}
+			
+			#ljdl {
+				position: absolute;
+				left: 87px;
+				top: 392px;
+			}
+			
+			#dximgDiv {
+				position: absolute;
+				width: 31px;
+				top: 194px;
+				height: 0px;
+				left: 5px;
+			}
+		
+			#hyzText{
+	position: absolute;
+	left: 238px;
+	top: 205px;
+			}
+		</style>
+		
+		
+	<script type="text/javascript">
+	var flag=1;
+	function check(){
+		 var phone=document.getElementById("phoneNum").value;
+		 var regexp=/^1[34578]\d{9}$/;
+		 if(!regexp.test(phone)){
+			 alert("请正确填写手机号");
+			 return;
+		 }
+		 $.ajax({
+				url : "/checkPhone.action",
+				data : "phone=" + phone,
+				dataType : "json",
+				//contentType : "application/json;charset=utf-8",
+				type : "post",
+				success : function(rs) {
+					$("#errorMsg").text("");
+					if (rs.msg == "success") {
+						alert("该手机号已被注册，您可使用短信登陆");
+						flag=0;
+						return;
+					} 
+				}
+			});
+		
+	}
+	function getCode(){
+		 var phone=document.getElementById("phoneNum").value;
+		 var regexp=/^1[34578]\d{9}$/;
+		 if(!regexp.test(phone)){
+			 alert("请正确填写手机号");
+			 return;
+		 }
+		 if(flag==0){
+			 alert("该手机号已被注册");
+			 return;
+		 }
+		 var code = "";
+		 for(var i=0;i<6;i++){
+			 code+=Math.floor(Math.random()*10);
+		 }
+		 document.getElementById("yzm").value=code;
+		$.ajax({
+		 url:"http://v.juhe.cn/sms/send?key=e980263af3a4bc71f2c6bc5268443b39&mobile="+phone+"&tpl_id=127791&tpl_value="+"%23code%23%3d"+code,
+	     //data:"key=" + "e980263af3a4bc71f2c6bc5268443b39&mobile" + "mobile=" + phone +"tpl_id="+"127791"+"tpl_value="+"%23code%23%3d"+code,     
+		 dataType:"jsonp",
+ 		 contentType:"application/json;charset=utf-8",
+ 		 dtype:"get",
+ 		 success:function(rs){
+ 			for(var i in rs){
+				console.log(i);
+				console.log("\t"+rs[i]);
+			}
+ 			alert(rs.reason);
+
+ 		 }
+		});
+	}
+	
+	function register(){
+		var phone=document.getElementById("phoneNum").value;
+		var regexp=/^1[34578]\d{9}$/;
+		 if(!regexp.test(phone)){
+			 alert("请正确填写手机号");
+			 return;
+		 }
+		var password=document.getElementById("loginPwd").value;
+		var password2=document.getElementById("loginPwd2").value;
+		var regexp2=/^[A-z 0-9]{6}$/;
+		if(!regexp2.test(password)){
+			alert("密码为6位数字或字母");
+			return;		
+		}
+		if(password!=password2){
+			alert("密码不一致请重新确认");
+			return;
+		}
+		var op=document.getElementById('ty');
+		if(!op.checked){
+			alert("请先阅读同意七武海保险协议");
+			return;
+		}
+		
+		var yzmm=document.getElementById("yzmm").value;
+		var yzm=document.getElementById("yzm").value;
+		if(yzmm!=""){
+			if(yzmm==yzm){
+				$.ajax({
+					url : "/userRegister.action",
+					data : "loginName=" + phone+ "&loginPwd="+ password+"&phoneNum="+phone,
+					dataType : "json",
+					//contentType : "application/json;charset=utf-8",
+					type : "post",
+					success : function(rs) {
+						$("#errorMsg").text("");
+						if (rs.msg == "success") {
+							alert("注册成功请登陆");
+							window.location = "/foreground/foreground-login.html";
+						} else {
+							alert("注册失败请重新注册");
+							return;
+						}
+					}
+				});
+				
+			}
+			else{
+				alert("请输入正确验证码");
+			}
+		}else{
+			alert("请输入验证码");
+		}
+		
+		
+	}
+	
+	
+	</script>
+	</head>
+
+	<body>
+		<div id="bigDiv">
+			<div style="position: absolute;top: 30px;left: 90px;width: 1250px;">
+				<div class="row">
+		    		<div class="col-lg-1 col-md-1 col-sm-1" style="margin-top: -10px;text-align: right;">
+						<img src="../img/logo.png" height="50px" />&nbsp;
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-2" style="margin-top: -6px;padding-left: 0;">		
+						<div class="text-primary" style="font-size: 30px;font-weight: 800;font-family: '微软雅黑';">七武海车险</div>
+					</div>
+		    	</div>
+			</div>
+			<div id="bodyDiv">
+				<div id="loginDiv">
+					<!--
+                    	会员注册
+                    -->
+					<div id="hyText">
+						<b><font style="color: #009966;font-size: 25px;">会员注册</font></b> </div>
+					<form>
+						<div id="sjhimgDiv">
+							<img src="../img/手机.PNG" /> </div>
+						<div class="form-group col-sm-10 " id="sjhDiv">
+							<input type="text" class="form-control col-sm-5" id="phoneNum" name="phoneNum" placeholder="请输入手机号" onchange="check()" maxlength="11">
+					  </div>
+						<div id="srmmimgDiv">
+							<img src="../img/输入密码.PNG" /> </div>
+						<div class="form-group col-sm-10 " id="srmmDiv">
+							<input type="password" class="form-control col-sm-5" id="loginPwd" name="loginPwd" placeholder="输入密码(6位可含字母数字)">
+					  </div>
+						<div id="qrmmimgDiv">
+							<img src="../img/确认密码.PNG" /> </div>
+
+						<div class="form-group col-sm-10 " id="qrmmDiv">
+						  <input name="password" type="password" class="form-control col-sm-5" id="loginPwd2" placeholder="确认密码">
+					  </div>						
+				  <div class="form-group col-sm-10 " id="dximgDiv">
+							<img src="../img/短信.PNG" /> </div>
+						<div class="form-group col-sm-10 " id="dxDiv">
+						    <input type="hidden" id="yzm">
+							<input type="text" class="form-control col-sm-2" id="yzmm" placeholder="短信动态码">
+						</div>
+					  <div id="fsDiv">
+						<input type="button" value="获取验证码" onclick="getCode()"/>						
+					  </div>
+
+						<div id="zhdlDiv">
+							<button type="button" class="btn btn-success col-sm-12" onclick="register()">立即注册</button>
+					  </div>
+						<div id="xyDiv">
+
+							<input id="ty" type="checkbox" />&nbsp;&nbsp;我已同意<a class="btn btn-link" data-toggle="modal" data-target="#myModal"><七武海车险协议></a>
+
+								<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-content">
+										<div style="width: 1000px;background-color: #FAFAFA;position: absolute;top:50px;left:290px;padding: 60px 100px 80px 100px;">
+											<div align="center"><h2>七武海车险协议</h2></div><br/>
+												<div align="left">
+													<h3>保险责任</h3> 
+													<p>保险期间内，被保险人或其允许的驾驶人在使用被保险机动车过程中，因下列原因造成被保险机动车的直接损失，且不属于免除保险人责任的范围，保险人依照本保险合同的约定负责赔偿。发生保险事故时，被保险人或其允许的驾驶人为防止或者减少被保险机动车的损失所支付的必要的、合理的施救费用，由保险人承担；施救费用数额在被保险机动车损失赔偿金额以外另行计算，最高不超过保险金额的数额。</p> 
+										
+										            <h3>责任免除</h3> 
+										            <p>下列情况下，不论任何原因造成被保险机动车的任何损失和费用，保险人均不负责赔偿：事故发生后，被保险人或其允许的驾驶人故意破坏、伪造现场、毁灭证据；事故发生后，在未依法采取措施的情况下驾驶被保险机动车或者遗弃被保险机动车离开事故现场；饮酒、吸食或注射毒品、服用国家管制的精神药品或者麻醉药品；无驾驶证，驾驶证被依法扣留、暂扣、吊销、注销期间；驾驶与驾驶证载明的准驾车型不相符合的机动车；实习期内驾驶公共汽车、营运客车或者执行任务的警车、载有危险物品的机动车或牵引挂车的机动车；驾驶出租机动车或营业性机动车无交通运输管理部门核发的许可证书或其他必备证书；学习驾驶时无合法教练员随车指导；非被保险人允许的驾驶人；</p> 
+										
+										            <h3>免赔率与免赔额</h3> 
+													<p>保险人在依据本保险合同约定计算赔款的基础上，按照下列方式免赔：被保险机动车一方负次要事故责任的，实行5%的事故责任免赔率；负同等事故责任的，实行10%的事故责任免赔率；负主要事故责任的，实行15%的事故责任免赔率；负全部事故责任或单方肇事事故的，实行20%的事故责任免赔率；被保险机动车的损失应当由第三方负责赔偿，无法找到第三方的，实行30%的绝对免赔率；违反安全装载规定、但不是事故发生的直接原因的，增加10%的绝对免赔率；对于投保人与保险人在投保时协商确定绝对免赔额的，本保险在实行免赔率的基础上增加每次事故绝对免赔额。</p> 
+										            
+										            <h3>保险金额</h3> 
+										            <p>保险金额按投保时被保险机动车的实际价值确定。投保时被保险机动车的实际价值由投保人与保险人根据投保时的新车购置价减去折旧金额后的价格协商确定或其他市场公允价值协商确定。 折旧金额可根据本保险合同列明的参考折旧系数表确定。</p> 
+										            
+										            <h3>赔偿处理</h3> 
+										            <p>发生保险事故时，被保险人或其允许的驾驶人应当及时采取合理的、必要的施救和保护措施，防止或者减少损失，并在保险事故发生后48小时内通知保险人。被保险人或其允许的驾驶人根据有关法律法规规定选择自行协商方式处理交通事故的，应当立即通知保险人。被保险人或其允许的驾驶人根据有关法律法规规定选择自行协商方式处理交通事故的，应当协助保险人勘验事故各方车辆、核实事故责任，并依照《道路交通事故处理程序规定》签订记录交通事故情况的协议书。被保险人索赔时，应当向保险人提供与确认保险事故的性质、原因、损失程度等有关的证明和资料。</p> 
+										           
+										            <h3>其他事项</h3> 
+										            <p>保险人按照本保险合同的约定，认为被保险人索赔提供的有关证明和资料不完整的，应当及时一次性通知被保险人补充提供。第六十四条 保险人收到被保险人的赔偿请求后，应当及时作出核定；情形复杂的，应当在三十日内作出核定。保险人应当将核定结果通知被保险人；对属于保险责任的，在与被保险人达成赔偿协议后十日内，履行赔偿义务。保险合同对赔偿期限另有约定的，保险人应当按照约定履行赔偿义务。保险人未及时履行前款约定义务的，除支付赔款外，应当赔偿被保险人因此受到的损失。</p>
+												</div>
+												<br/>
+									            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> 
+											</div>
+										</div><!-- modal-content -->
+									</div><!-- modal -->
+					 		 </div>
+						<div id="ljdl">
+							<a href="foreground-login.html">
+								已有账号,立即登陆>>></a></div>
+					</form>
+			  </div>
+			</div>
+		</div>
+		
+		<div id="footDiv">
+			<div id="footContent">
+				版权所有 © 中国七武海车险（集团）股份有限公司 未经许可不得复制、转载或摘编，违者必究！ </div>
+		</div>
+		
+	</body>
+
+</html>

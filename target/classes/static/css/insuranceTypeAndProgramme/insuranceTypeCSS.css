@@ -1,0 +1,37 @@
+#page, #mainTable, #nullMsg {
+  margin:  0 auto;
+  width: 95%;
+}
+
+table thead th, td {
+  text-align: center;
+}
+
+.row {
+  width: 100%;
+}
+
+#selectBar, #innerTable {
+  margin: 0 auto;
+}
+
+#cmn {
+  width: 95%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#nullMsg {
+  height: 180px;
+}
+
+#nullMsg p{
+  display: flex;
+  text-align: center;
+  margin: 200px auto;
+  font-size: xx-large;
+  font-weight: bolder;
+  color: #AAAAAA;
+  justify-content:center;
+  align-items:Center;
+}
